@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Database Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: supercv_db
+    restart: always
+    environment:
+      POSTGRES_USER: user123
+      POSTGRES_PASSWORD: password123 
+      POSTGRES_DB: supercv
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Caching & Queue Service
+  redis:
+    image: redis:alpine
+    container_name: supercv_redis
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
