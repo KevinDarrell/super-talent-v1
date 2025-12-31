@@ -1,22 +1,23 @@
 "use client";
 
-import { useCv } from "@/lib/cv-context";
-import { Sparkles, Check, ArrowRight, X } from "lucide-react";
-import { motion } from "framer-motion";
+// 1. Tambahkan import CvData dari context
+import { useCv, CvData } from "@/lib/cv-context";
+import { Sparkles, Check, X } from "lucide-react";
+import { useState } from "react"; 
 
 interface SuggestionSidebarProps {
-  optimizedData: any; // Data hasil AI
-  analysisData: any;  // Data hasil Analyze (untuk konteks)
+  optimizedData: any;
+  analysisData: any;
   onClose: () => void;
 }
 
 export function SuggestionSidebar({ optimizedData, analysisData, onClose }: SuggestionSidebarProps) {
   const { applySuggestion, cvData } = useCv();
 
-  // Helper untuk menerapkan perubahan per section
-  const handleApply = (section: string, content: any) => {
+  // --- PERBAIKAN DISINI ---
+  // Ubah tipe 'section' dari 'string' menjadi 'keyof CvData'
+  const handleApply = (section: keyof CvData, content: any) => {
     applySuggestion(section, content);
-    // Opsional: Beri notifikasi kecil atau ubah status tombol jadi "Applied"
   };
 
   return (
@@ -41,7 +42,8 @@ export function SuggestionSidebar({ optimizedData, analysisData, onClose }: Sugg
             title="Professional Summary"
             oldVal={cvData?.professional_summary}
             newVal={optimizedData.professional_summary}
-            onApply={() => handleApply('summary', optimizedData.professional_summary)}
+            // Key 'professional_summary' valid karena ada di CvData
+            onApply={() => handleApply('professional_summary', optimizedData.professional_summary)}
           />
         )}
 
@@ -50,7 +52,8 @@ export function SuggestionSidebar({ optimizedData, analysisData, onClose }: Sugg
              <div className="flex justify-between items-center mb-2">
                 <h4 className="font-semibold text-slate-200 text-sm">Skills Enhancement</h4>
                 <button 
-                    onClick={() => handleApply('skills', optimizedData.hard_skills)}
+                    // Key 'hard_skills' valid
+                    onClick={() => handleApply('hard_skills', optimizedData.hard_skills)}
                     className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-full flex items-center gap-1 transition-all"
                 >
                     <Check size={12}/> Apply All
@@ -58,7 +61,6 @@ export function SuggestionSidebar({ optimizedData, analysisData, onClose }: Sugg
              </div>
              <p className="text-xs text-slate-400 mb-3">AI suggests adding these missing skills found in your analysis:</p>
              <div className="flex flex-wrap gap-2">
-                 {/* Tampilkan Skill Baru (Bedanya dgn skill lama) */}
                  {optimizedData.hard_skills
                     .filter((s: string) => !cvData?.hard_skills.includes(s))
                     .map((skill: string, i: number) => (
@@ -74,7 +76,8 @@ export function SuggestionSidebar({ optimizedData, analysisData, onClose }: Sugg
             <div className="flex justify-between items-center mb-2">
                 <h4 className="font-semibold text-slate-200 text-sm">Work Experience</h4>
                  <button 
-                    onClick={() => handleApply('experience', optimizedData.work_experience)}
+                    // Key 'work_experience' valid
+                    onClick={() => handleApply('work_experience', optimizedData.work_experience)}
                     className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-full flex items-center gap-1 transition-all"
                 >
                     <Check size={12}/> Update All Bullets
@@ -127,5 +130,3 @@ function SuggestionCard({ title, oldVal, newVal, onApply }: any) {
         </div>
     )
 }
-
-import { useState } from "react";

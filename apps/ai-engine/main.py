@@ -1,18 +1,17 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.concurrency import run_in_threadpool
-from typing import Optional
+from typing import Optional, Dict, Any
 import asyncio
 import json
 
 # --- IMPORT MODULES ---
-# Pastikan src.schemas sudah diupdate dengan field baru (ats_score, writing_score, dll)
 from src.schemas import AnalysisResult, ImprovedCVResult
 from src.services.extractor import extract_text_from_bytes
 from src.services.ai_engine import analyze_cv, customize_cv 
 from src.services.scraper import scrape_job_with_jina
 
-app = FastAPI(title="CV Analyzer API", version="1.4.0")
+app = FastAPI(title="CV Analyzer API", version="1.5.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- WRAPPER UNTUK MEMANGGIL AI DI THREAD POOL (BIAR GAK BLOCKING) ---
+# --- WRAPPER ASYNC ---
 def blocking_analyze(cv_text: str, job_desc: str):
     return asyncio.run(analyze_cv(cv_text, job_desc))
 
@@ -30,9 +29,10 @@ def blocking_customize(cv_text: str, mode: str, context_data: str):
     return asyncio.run(customize_cv(cv_text, mode, context_data))
 
 # ==============================================================================
-# 1. ENDPOINT ANALYZE (MENGGUNAKAN PROMPT REKAN ANDA)
+# 1. ENDPOINT ANALYZE (FIXED)
 # ==============================================================================
-@app.post("/api/analyze", response_model=AnalysisResult)
+# HAPUS 'response_model=AnalysisResult' agar bisa return Dictionary {analysis, cv_data}
+@app.post("/api/analyze")
 async def analyze_endpoint(
     file: UploadFile = File(...),
     job_description: Optional[str] = Form(None),
@@ -46,14 +46,12 @@ async def analyze_endpoint(
         print(f"Fetching JD from URL: {job_url}")
         final_jd = await scrape_job_with_jina(job_url)
     
-    # Jika user kosongkan JD, kita beri default agar AI tetap jalan (General Review)
     if not final_jd:
         final_jd = "General Tech Professional requirements (Assess based on standard industry best practices)."
 
     # 2. Baca File CV
     content = await file.read()
     try:
-        # Ekstrak Teks (Support PDF/DOCX)
         cv_text = await run_in_threadpool(
             extract_text_from_bytes, 
             content, 
@@ -67,24 +65,23 @@ async def analyze_endpoint(
 
     # 3. Panggil AI Analysis
     try:
-        # Result akan sesuai schema AnalysisResult (6 kriteria)
+        # Output dari ai_engine sekarang adalah Dict: {'analysis': ..., 'cv_data': ...}
         result = await run_in_threadpool(blocking_analyze, cv_text, final_jd)
         return result
     except Exception as e:
         print(f"AI Error: {e}")
-        raise HTTPException(status_code=500, detail="Terjadi kesalahan pada AI engine.")
+        raise HTTPException(status_code=500, detail=f"AI Engine Error: {str(e)}")
 
 # ==============================================================================
-# 2. ENDPOINT CUSTOMIZE (DUAL MODE: JOB DESC / ANALYSIS)
+# 2. ENDPOINT CUSTOMIZE
 # ==============================================================================
 @app.post("/api/customize", response_model=ImprovedCVResult)
 async def customize_endpoint(
     file: UploadFile = File(...),
-    mode: str = Form(...), # 'job_desc' atau 'analysis'
+    mode: str = Form(...),
     job_description: Optional[str] = Form(None),
-    analysis_context: Optional[str] = Form(None) # JSON String hasil analisis
+    analysis_context: Optional[str] = Form(None)
 ):
-    # 1. Tentukan Data Context berdasarkan Mode
     final_context = ""
     
     if mode == "job_desc":
@@ -94,15 +91,12 @@ async def customize_endpoint(
         
     elif mode == "analysis":
         if not analysis_context:
-            # Fallback jika frontend error mengirim konteks
             final_context = "Fix general weaknesses found in the CV."
         else:
             final_context = analysis_context 
-            
     else:
-        raise HTTPException(400, "Mode tidak valid. Gunakan 'job_desc' atau 'analysis'.")
+        raise HTTPException(400, "Mode tidak valid.")
 
-    # 2. Ekstrak CV Lagi (Karena HTTP Stateless, kita butuh teks aslinya lagi)
     content = await file.read()
     try:
         cv_text = await run_in_threadpool(
@@ -113,9 +107,7 @@ async def customize_endpoint(
     except Exception as e:
         raise HTTPException(400, f"Gagal membaca file: {str(e)}")
 
-    # 3. Panggil AI Customize
     try:
-        # customize_cv akan mereturn JSON struktur CV baru (ImprovedCVResult)
         result = await run_in_threadpool(blocking_customize, cv_text, mode, final_context)
         return result
     except Exception as e:

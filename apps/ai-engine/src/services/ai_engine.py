@@ -7,7 +7,7 @@ from src.schemas import AnalysisResult, ImprovedCVResult, CVContactInfo
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-MODEL_NAME = "gemini-3-flash-preview" 
+MODEL_NAME = "gemini-2.5-flash" 
 
 def clean_json_text(text: str) -> str:
     try:
@@ -19,9 +19,42 @@ def clean_json_text(text: str) -> str:
     except Exception:
         return text
 
-# --- FUNGSI 1: ANALYZE (Prompt Rekan Anda) ---
-async def analyze_cv(cv_text: str, job_desc: str) -> AnalysisResult:
-    # Prompt Rekan Anda + JSON Instruction
+# --- FUNGSI BARU: EKSTRAK DATA RAW (Agar Editor Tidak Error) ---
+# Fungsi ini hanya mengambil data JSON tanpa mengubah isi (Strict Parser)
+async def extract_data_only(cv_text: str) -> ImprovedCVResult:
+    prompt_text = f"""
+    You are a strict data parser. 
+    Extract the following CV text into a structured JSON format matching this schema.
+    
+    RULES:
+    1. DO NOT rewrite, improve, or change the content. Extract it exactly as is.
+    2. If a field is missing, use an empty string "" or empty list [].
+    
+    CV TEXT:
+    {cv_text[:4000]}
+
+    OUTPUT SCHEMA: ImprovedCVResult (JSON)
+    """
+    try:
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=[types.Content(role="user", parts=[types.Part.from_text(text=prompt_text)])],
+            config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=ImprovedCVResult)
+        )
+        if response.parsed: return response.parsed
+        return ImprovedCVResult(**json.loads(clean_json_text(response.text)))
+    except Exception as e:
+        print(f"Extract Error: {e}")
+        # Return fallback kosong agar frontend tidak crash
+        return ImprovedCVResult(
+            full_name="Candidate", professional_summary="", 
+            contact_info=CVContactInfo(email="", phone="", location=""), 
+            hard_skills=[], soft_skills=[], work_experience=[], education=[], projects=[]
+        )
+
+# --- FUNGSI 1: ANALYZE (Prompt Asli Anda - 6 Kriteria) ---
+async def analyze_cv(cv_text: str, job_desc: str):
+    # 1. Prompt Analisis (Persis punya Anda)
     prompt_text = f"""
     You are a Senior Technical Recruiter and CV Expert. 
     Analyze the following Candidate CV against the provided Job Description and make the words "You" for the candidate, not He/She.
@@ -59,25 +92,10 @@ async def analyze_cv(cv_text: str, job_desc: str) -> AnalysisResult:
        - List critical gaps or missing elements.
 
     *** REQUIRED JSON OUTPUT FORMAT ***
-    You MUST output strictly strictly JSON matching this schema (do not output markdown text outside JSON):
-    {{
-        "candidate_name": "Name found in CV",
-        "overall_score": 0,
-        "overall_summary": "Detailed feedback using 'You'...",
-        "writing_score": 0,
-        "writing_detail": "Feedback on grammar/voice...",
-        "ats_score": 0,
-        "ats_detail": "Feedback on format...",
-        "skill_score": 0,
-        "skill_detail": "Feedback on matching skills...",
-        "experience_score": 0,
-        "experience_detail": "Feedback on relevance...",
-        "keyword_score": 0,
-        "key_strengths": ["Strength 1", "Strength 2"],
-        "missing_skills": ["Gap 1", "Gap 2"]
-    }}
+    You MUST output strictly strictly JSON matching this schema AnalysisResult.
     """
     
+    analysis_res = None
     try:
         response = client.models.generate_content(
             model=MODEL_NAME,
@@ -88,19 +106,33 @@ async def analyze_cv(cv_text: str, job_desc: str) -> AnalysisResult:
                 temperature=0.2 
             )
         )
-        if response.parsed: return response.parsed
-        return AnalysisResult(**json.loads(clean_json_text(response.text)))
+        if response.parsed: 
+            analysis_res = response.parsed
+        else:
+            analysis_res = AnalysisResult(**json.loads(clean_json_text(response.text)))
+            
     except Exception as e:
         print(f"Analyze Error: {e}")
         # Return fallback
-        return AnalysisResult(
+        analysis_res = AnalysisResult(
             candidate_name="Unknown", overall_score=0, overall_summary=f"Error: {str(e)}",
             writing_score=0, writing_detail="", ats_score=0, ats_detail="",
             skill_score=0, skill_detail="", experience_score=0, experience_detail="",
             keyword_score=0, key_strengths=[], missing_skills=[]
         )
 
-# --- FUNGSI 2: CUSTOMIZE (Improved Logic) ---
+    # 2. EKSTRAK DATA ASLI (PENTING: Ini yang membuat Editor Preview tampil!)
+    # Kita panggil fungsi extract_data_only di sini secara paralel/berurutan
+    original_data = await extract_data_only(cv_text)
+
+    # 3. Return Dictionary Gabungan
+    # Frontend akan menerima { "analysis": ..., "cv_data": ... }
+    return {
+        "analysis": analysis_res,
+        "cv_data": original_data
+    }
+
+# --- FUNGSI 2: CUSTOMIZE (Prompt Asli Anda - Elite Writer) ---
 async def customize_cv(cv_text: str, mode: str, context_data: str) -> ImprovedCVResult:
     # 1. Instruksi Mode
     if mode == 'job_desc':
