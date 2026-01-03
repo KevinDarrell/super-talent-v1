@@ -1,24 +1,22 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { pageVariants, transitions, staggerContainer, staggerChild, luxuryEasing } from "@/lib/animations";
 
 interface PageTransitionProps {
     children: ReactNode;
     className?: string;
 }
 
-
 export function PageTransition({ children, className }: PageTransitionProps) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{
-                duration: 0.3,
-                ease: [0.25, 0.1, 0.25, 1]
-            }}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={transitions.pageEntry}
             className={className}
         >
             {children}
@@ -39,14 +37,13 @@ export function FadeIn({
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay }}
+            transition={{ duration: 0.4, delay, ease: luxuryEasing.power4 }}
             className={className}
         >
             {children}
         </motion.div>
     );
 }
-
 
 export function SlideUp({
     children,
@@ -62,9 +59,9 @@ export function SlideUp({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
-                duration: 0.5,
+                duration: 0.4,
                 delay,
-                ease: [0.25, 0.1, 0.25, 1]
+                ease: luxuryEasing.power4
             }}
             className={className}
         >
@@ -73,11 +70,10 @@ export function SlideUp({
     );
 }
 
-
 export function StaggerContainer({
     children,
     className,
-    staggerDelay = 0.1
+    staggerDelay = 0.12
 }: {
     children: ReactNode;
     className?: string;
@@ -93,7 +89,7 @@ export function StaggerContainer({
                     opacity: 1,
                     transition: {
                         staggerChildren: staggerDelay,
-                        delayChildren: 0.1
+                        delayChildren: 0.2
                     }
                 }
             }}
@@ -118,7 +114,7 @@ export function StaggerItem({
                 visible: {
                     opacity: 1,
                     y: 0,
-                    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }
+                    transition: { duration: 0.4, ease: luxuryEasing.power4 }
                 }
             }}
             className={className}

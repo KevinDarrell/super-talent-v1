@@ -20,7 +20,7 @@ export function UploadSection() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // Use TanStack Query mutation for CV analysis
+
   const analyzeMutation = useAnalyzeMutation();
 
   const handleDrag = (e: React.DragEvent) => {
@@ -58,7 +58,7 @@ export function UploadSection() {
         },
         onError: (error) => {
           console.error("Analysis Error:", error.message);
-          // Check if it's a credit-related error
+
           if (error.message.includes("credit") || error.message.includes("Credit")) {
             setShowUpgradeModal(true);
           }
@@ -175,13 +175,17 @@ export function UploadSection() {
               <button
                 onClick={handleAnalyze}
                 disabled={isLoading || !file}
-                className="h-16 relative overflow-hidden rounded-xl bg-gradient-to-r from-white to-slate-200 text-slate-950 font-bold text-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group/btn"
+                className="h-16 relative overflow-hidden rounded-xl font-bold text-lg transition-all duration-500
+                           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group/btn
+                           bg-gradient-to-r from-[hsl(38,92%,50%)] to-[hsl(38,92%,45%)] text-[hsl(222,47%,8%)]
+                           hover:shadow-[0_0_60px_hsla(38,92%,50%,0.4)] hover:translate-y-[-2px] active:scale-[0.98]"
+                style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles size={20} className="text-indigo-600" />}
+                  {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles size={20} />}
                   {isLoading ? "Analyzing..." : "Initialize Analysis"}
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-[100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-[100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />
               </button>
             </div>
           </div>

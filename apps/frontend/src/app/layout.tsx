@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 import { Toaster } from "sonner";
 import { AuthToast } from "@/components/auth-toast";
 import { Suspense } from "react";
+import { ScrollProgress } from "@/components/design-system/ScrollProgress";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -71,10 +72,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(
-        "min-h-screen font-sans selection:bg-amber-500/30 selection:text-amber-200",
+        "min-h-screen font-sans selection:bg-[hsla(38,92%,50%,0.3)] selection:text-[hsl(38,92%,70%)]",
         inter.variable,
         playfair.variable
       )}>
+        <ScrollProgress />
         <AuthProvider>
           <QueryProvider>
             <Navbar />
