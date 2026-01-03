@@ -4,13 +4,15 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles, LogOut, Moon, Sun } from "lucide-react";
+import { Menu, X, Sparkles, LogOut, Moon, Sun, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
 
 export function Navbar() {
   const { data: session } = useSession();
-  const { theme, toggleTheme } = useTheme();
+  const mode = useTheme((s) => s.mode);
+  const resolvedTheme = useTheme((s) => s.resolvedTheme);
+  const toggleTheme = useTheme((s) => s.toggleTheme);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -62,8 +64,11 @@ export function Navbar() {
                 onClick={toggleTheme}
                 className="p-2.5 rounded-full glass-button transition-all duration-500"
                 aria-label="Toggle theme"
+                title={mode === 'auto' ? 'Auto (System)' : mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
               >
-                {theme === 'dark' ? (
+                {mode === 'auto' ? (
+                  <Monitor size={18} className="text-indigo-500" />
+                ) : resolvedTheme === 'dark' ? (
                   <Sun size={18} className="text-amber-500" />
                 ) : (
                   <Moon size={18} className="text-slate-700" />
@@ -99,8 +104,11 @@ export function Navbar() {
                 onClick={toggleTheme}
                 className="p-2.5 rounded-full glass-button transition-all duration-300"
                 aria-label="Toggle theme"
+                title={mode === 'auto' ? 'Auto (System)' : mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
               >
-                {theme === 'dark' ? (
+                {mode === 'auto' ? (
+                  <Monitor size={18} className="text-indigo-500" />
+                ) : resolvedTheme === 'dark' ? (
                   <Sun size={18} className="text-amber-500" />
                 ) : (
                   <Moon size={18} className="text-slate-700" />
