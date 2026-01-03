@@ -6,12 +6,11 @@ import { CvEditor } from "./CvEditor";
 import { RibbonBar } from "./RibbonBar";
 import { SuggestionCard } from "./SuggestionCard";
 import EditorLoading from "@/app/cv/[id]/editor/loading";
-import { Check, Sparkles, ArrowLeft, Cpu, FileText } from "lucide-react";
+import { Check, Sparkles, ArrowLeft, Cpu, FileText, Wand2, CheckCircle2, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { CvData, SectionType } from "../types/editor.types";
-
 
 export function EditorLayout() {
     const aiDraft = useEditorStore((s) => s.aiDraft);
@@ -26,7 +25,6 @@ export function EditorLayout() {
     if (!aiDraft || !cvData) {
         return <EditorLoading />;
     }
-
 
     const findBestMatchIndex = (aiItem: { company?: string; title?: string }, userList: { company?: string; title?: string }[], aiIndex: number) => {
         if (!userList || userList.length === 0) return -1;
@@ -68,26 +66,75 @@ export function EditorLayout() {
 
     const missingSkills = (aiDraft.hard_skills || []).filter((s: string) => !(cvData.hard_skills || []).includes(s));
 
-    return (
-        <div className="fixed inset-0 h-[100dvh] z-[100] bg-stone-100 dark:bg-slate-950 flex flex-col md:flex-row overflow-hidden transition-colors">
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 dark:opacity-20 pointer-events-none z-0"></div>
+    const totalSuggestions =
+        (aiDraft.professional_summary !== cvData.professional_summary ? 1 : 0) +
+        (missingSkills.length > 0 ? 1 : 0) +
+        (aiDraft.work_experience || []).filter((aiExp, idx) => findBestMatchIndex(aiExp, cvData.work_experience || [], idx) !== -1).length;
 
+    const appliedCount = appliedIds.size;
+    const progressPercent = totalSuggestions > 0 ? Math.min(100, (appliedCount / totalSuggestions) * 100) : 0;
+
+    return (
+        <div className="fixed inset-0 h-[100dvh] z-[100] bg-gradient-to-br from-slate-100 via-stone-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col md:flex-row overflow-hidden transition-colors">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 pointer-events-none z-0" />
 
             <aside
                 className={cn(
-                    "w-full md:w-[400px] lg:w-[450px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200 dark:border-white/5 flex flex-col z-30 shadow-2xl transition-all duration-300 absolute inset-0 md:relative",
+                    "w-full md:w-[400px] lg:w-[450px] flex flex-col z-30 transition-all duration-300 absolute inset-0 md:relative overflow-hidden",
                     mobileTab === "ai" ? "translate-x-0" : "-translate-x-full md:translate-x-0"
                 )}
             >
-                <div className="p-4 md:p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-slate-950/30">
-                    <div className="flex items-center gap-2 text-slate-900 dark:text-white font-serif font-bold text-lg">
-                        <Cpu size={18} className="text-indigo-500 dark:text-indigo-400" /> AI Review
+                <div className="absolute inset-0 bg-white/90 dark:bg-slate-900/95 backdrop-blur-2xl" />
+                <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-amber-500/20 to-transparent" />
+
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="relative p-5 border-b border-slate-200/50 dark:border-white/5"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/10 dark:via-purple-500/10 dark:to-pink-500/10" />
+
+                    <div className="relative flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                <Wand2 size={20} className="text-white" />
+                            </div>
+                            <div>
+                                <h2 className="font-bold text-slate-900 dark:text-white">AI Review</h2>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Smart suggestions for your CV</p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/"
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl text-slate-400 transition-colors"
+                        >
+                            <ArrowLeft size={18} />
+                        </Link>
                     </div>
-                    <Link href="/" className="p-2 hover:bg-slate-200 dark:hover:bg-white/5 rounded-full text-slate-500 dark:text-slate-400">
-                        <ArrowLeft size={18} />
-                    </Link>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-5 custom-scrollbar pb-32 md:pb-5">
+
+                    {totalSuggestions > 0 && (
+                        <div className="relative mt-4">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    {appliedCount} of {totalSuggestions} applied
+                                </span>
+                                <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                                    {Math.round(progressPercent)}%
+                                </span>
+                            </div>
+                            <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${progressPercent}%` }}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </motion.div>
+
+                <div className="relative flex-1 overflow-y-auto p-4 md:p-5 space-y-4 custom-scrollbar pb-32 md:pb-5">
                     <AnimatePresence mode="popLayout">
                         {!appliedIds.has("professional_summary-0") && aiDraft.professional_summary !== cvData.professional_summary && (
                             <SuggestionCard
@@ -98,20 +145,21 @@ export function EditorLayout() {
                                 onApply={() => handleApply("professional_summary", 0, aiDraft.professional_summary, 0)}
                             />
                         )}
-                        {missingSkills.length > 0 && (
+                        {missingSkills.length > 0 && !appliedIds.has("hard_skills-0") && (
                             <SuggestionCard
+                                key="skills-card"
                                 title="Missing Keywords"
                                 badge="Skills"
                                 content={
                                     <div className="flex flex-wrap gap-2">
                                         {missingSkills.map((s: string, i: number) => (
-                                            <span key={i} className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-white/10 text-emerald-600 dark:text-emerald-300">
+                                            <span key={i} className="text-xs px-2 py-1 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-lg border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-medium">
                                                 + {s}
                                             </span>
                                         ))}
                                     </div>
                                 }
-                                onApply={() => applySuggestion("hard_skills", aiDraft.hard_skills || [])}
+                                onApply={() => { applySuggestion("hard_skills", aiDraft.hard_skills || []); setAppliedIds(prev => new Set(prev).add("hard_skills-0")); }}
                             />
                         )}
                         {(aiDraft.work_experience || []).map((aiExp, idx) => {
@@ -137,64 +185,108 @@ export function EditorLayout() {
                             return null;
                         })}
                     </AnimatePresence>
-                    {missingSkills.length === 0 &&
-                        (aiDraft.work_experience || []).every((aiExp, idx) => {
-                            const match = findBestMatchIndex(aiExp, (cvData.work_experience || []), idx);
-                            return appliedIds.has(`work_experience-${idx}`) || match === -1;
-                        }) && (
-                            <div className="text-center py-10 opacity-50 text-slate-500 dark:text-slate-400">
-                                <Check size={32} className="mx-auto mb-2 text-emerald-500" />
-                                All suggestions applied!
-                            </div>
-                        )}
+
+                    {appliedCount >= totalSuggestions && totalSuggestions > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-12"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring", delay: 0.2 }}
+                                className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30"
+                            >
+                                <CheckCircle2 size={32} className="text-white" />
+                            </motion.div>
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">All Done!</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">All suggestions have been applied</p>
+                        </motion.div>
+                    )}
+
+                    {totalSuggestions === 0 && (
+                        <div className="text-center py-12 opacity-60">
+                            <Zap size={32} className="mx-auto mb-3 text-amber-500" />
+                            <p className="text-slate-500 dark:text-slate-400">Your CV is looking great!</p>
+                        </div>
+                    )}
                 </div>
             </aside>
 
-
             <main
                 className={cn(
-                    "flex-1 bg-slate-200 dark:bg-slate-950 relative flex flex-col h-full overflow-hidden transition-all duration-300 z-10",
+                    "flex-1 relative flex flex-col h-full overflow-hidden transition-all duration-300 z-10",
                     mobileTab === "ai" ? "translate-x-full md:translate-x-0 hidden md:flex" : "translate-x-0 flex"
                 )}
             >
-                <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar flex flex-col items-center bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:20px_20px] pb-40 md:pb-16">
+                <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar flex flex-col items-center bg-[radial-gradient(circle_at_center,#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,#334155_1px,transparent_1px)] [background-size:24px_24px] pb-40 md:pb-16">
                     <div className="w-full sticky top-0 z-40 p-4">
                         <RibbonBar printRef={printRef} />
                     </div>
 
-                    <div
-                        className="relative shrink-0 w-[210mm] min-h-[297mm] h-fit bg-white text-slate-900 shadow-[0_0_60px_rgba(0,0,0,0.3)] dark:shadow-[0_0_60px_rgba(0,0,0,0.6)] 
-              transform-gpu origin-top 
-              scale-[0.42] sm:scale-[0.6] md:scale-100
-              mt-4
-              transition-transform duration-300"
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="relative shrink-0 mt-4 mb-8 mx-auto w-full max-w-[95w] md:max-w-none md:w-[210mm]"
                     >
-                        <CvEditor printRef={printRef} />
-                    </div>
+                        <div className="absolute -inset-4 bg-gradient-to-b from-black/5 to-black/20 dark:from-black/20 dark:to-black/40 rounded-3xl blur-2xl pointer-events-none" />
+                        <div
+                            className="relative bg-white shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-sm overflow-hidden
+                                       aspect-[210/297] md:aspect-auto md:min-h-[297mm]"
+                            style={{ colorScheme: 'light' }}
+                        >
+                            <div className="absolute inset-0 md:relative md:inset-auto overflow-auto">
+                                <div className="w-[210mm] min-h-[297mm] origin-top-left scale-[0.45] sm:scale-[0.55] md:scale-100 
+                                               [&_*]:!text-slate-900 [&_h1]:!text-inherit [&_h2]:!text-inherit [&_h3]:!text-inherit 
+                                               [&_.text-slate-500]:!text-slate-500 [&_.text-slate-600]:!text-slate-600 [&_.text-slate-700]:!text-slate-700">
+                                    <CvEditor printRef={printRef} />
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </main>
 
-
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 p-4 z-50 flex gap-4 pb-8 safe-area-pb">
-                <button
-                    onClick={() => setMobileTab("ai")}
-                    className={cn(
-                        "flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2",
-                        mobileTab === "ai" ? "bg-indigo-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
-                    )}
-                >
-                    <Cpu size={16} /> Suggestions
-                </button>
-                <button
-                    onClick={() => setMobileTab("preview")}
-                    className={cn(
-                        "flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2",
-                        mobileTab === "preview" ? "bg-amber-500 text-slate-950" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
-                    )}
-                >
-                    <FileText size={16} /> Preview
-                </button>
-            </div>
+            <motion.div
+                initial={{ y: 100 }}
+                animate={{ y: 0 }}
+                className="md:hidden fixed bottom-0 left-0 right-0 z-50"
+            >
+                <div className="absolute inset-0 bg-white/90 dark:bg-slate-900/95 backdrop-blur-2xl border-t border-slate-200/50 dark:border-white/10" />
+                <div className="relative flex gap-3 p-4 pb-8 safe-area-pb">
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setMobileTab("ai")}
+                        className={cn(
+                            "flex-1 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all",
+                            mobileTab === "ai"
+                                ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                        )}
+                    >
+                        <Wand2 size={18} /> AI Review
+                        {appliedCount < totalSuggestions && (
+                            <span className="w-5 h-5 rounded-full bg-white/20 text-[10px] font-bold flex items-center justify-center">
+                                {totalSuggestions - appliedCount}
+                            </span>
+                        )}
+                    </motion.button>
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setMobileTab("preview")}
+                        className={cn(
+                            "flex-1 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all",
+                            mobileTab === "preview"
+                                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                        )}
+                    >
+                        <FileText size={18} /> Preview
+                    </motion.button>
+                </div>
+            </motion.div>
         </div>
     );
 }
