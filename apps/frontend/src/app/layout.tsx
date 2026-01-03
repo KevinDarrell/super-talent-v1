@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { AuthProvider } from "@/components/providers/AuthProvider"; 
-import { CvProvider } from "@/lib/cv-context"; 
-import { Navbar } from "@/components/Navbar"; 
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { Navbar } from "@/components/Navbar";
 import { Toaster } from "sonner";
 import { AuthToast } from "@/components/auth-toast";
 import { Suspense } from "react";
@@ -29,21 +29,17 @@ export default function RootLayout({
         inter.variable,
         playfair.variable
       )}>
-        
         <AuthProvider>
-          <CvProvider>            
+          <QueryProvider>
             <Navbar />
-
             <main className="pt-24 min-h-screen">
               {children}
               <Toaster position="top-center" richColors theme="dark" />
-              <Suspense fallback={null}> 
+              <Suspense fallback={null}>
                 <AuthToast />
               </Suspense>
             </main>
-            
-          </CvProvider>
-
+          </QueryProvider>
         </AuthProvider>
       </body>
     </html>

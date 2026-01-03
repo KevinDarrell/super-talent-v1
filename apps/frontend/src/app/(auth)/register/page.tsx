@@ -1,17 +1,17 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState, Suspense } from "react"; 
-import { useRouter, useSearchParams } from "next/navigation"; 
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, ArrowLeft, Chrome } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 function RegisterForm() {
   const router = useRouter();
-  const searchParams = useSearchParams(); 
-  
+  const searchParams = useSearchParams();
+
 
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
@@ -26,7 +26,7 @@ function RegisterForm() {
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-      
+
       const res = await fetch(`${backendUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,26 +36,31 @@ function RegisterForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        const errorMessage = Array.isArray(data.message) 
-            ? data.message.join(", ") 
-            : data.message || "Registration failed";
+        const errorMessage = Array.isArray(data.message)
+          ? data.message.join(", ")
+          : data.message || "Registration failed";
         throw new Error(errorMessage);
       }
 
       toast.success("Account created successfully! Logging you in...");
 
-      const loginRes = await signIn("credentials", { 
-        redirect: false, 
-        email, 
-        password 
+      const loginRes = await signIn("credentials", {
+        redirect: false,
+        email,
+        password
       });
 
       if (loginRes?.error) {
         toast.warning("Please login with your new account.");
         router.push("/login");
       } else {
-        router.push(callbackUrl);
-        router.refresh();
+        // Force hard navigation to callbackUrl
+        if (callbackUrl && callbackUrl !== "/") {
+          window.location.href = callbackUrl;
+        } else {
+          router.push("/");
+          router.refresh();
+        }
       }
 
     } catch (error: any) {
@@ -66,14 +71,14 @@ function RegisterForm() {
   };
 
   const handleGoogleLogin = () => {
-      setIsLoading(true);
-      toast.loading("Redirecting to Google...");
-      
-      
-      const separator = callbackUrl.includes('?') ? '&' : '?';
-      const finalCallbackUrl = `${callbackUrl}${separator}login=success`;
+    setIsLoading(true);
+    toast.loading("Redirecting to Google...");
 
-      signIn("google", { callbackUrl: finalCallbackUrl });
+
+    const separator = callbackUrl.includes('?') ? '&' : '?';
+    const finalCallbackUrl = `${callbackUrl}${separator}login=success`;
+
+    signIn("google", { callbackUrl: finalCallbackUrl });
   };
 
   return (
@@ -81,8 +86,8 @@ function RegisterForm() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[128px] pointer-events-none" />
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
-        <Link href="/" className="inline-flex items-center text-slate-500 hover:text-amber-400 mb-6 text-sm transition-colors"><ArrowLeft size={16} className="mr-1"/> Back to Home</Link>
-        
+        <Link href="/" className="inline-flex items-center text-slate-500 hover:text-amber-400 mb-6 text-sm transition-colors"><ArrowLeft size={16} className="mr-1" /> Back to Home</Link>
+
         <h1 className="text-2xl font-serif font-bold text-white mb-2 text-center">Join Super CV</h1>
         <p className="text-slate-400 text-sm text-center mb-8">Create an account to start analyzing.</p>
 
@@ -103,12 +108,12 @@ function RegisterForm() {
         </div>
 
         <button onClick={handleGoogleLogin} className="w-full h-12 bg-white text-slate-900 font-medium rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
-          <Chrome size={20} className="text-slate-900"/> Google
+          <Chrome size={20} className="text-slate-900" /> Google
         </button>
 
         <p className="mt-6 text-center text-sm text-slate-400">
           Already have an account?{" "}
-          <Link href="/login" className="text-amber-400 hover:underline">
+          <Link href={callbackUrl && callbackUrl !== "/" ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login"} className="text-amber-400 hover:underline">
             Sign In
           </Link>
         </p>
@@ -119,7 +124,7 @@ function RegisterForm() {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-amber-500"><Loader2 className="animate-spin" size={32}/></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-amber-500"><Loader2 className="animate-spin" size={32} /></div>}>
       <RegisterForm />
     </Suspense>
   );

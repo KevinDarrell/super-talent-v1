@@ -17,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const backendUrl = "http://127.0.0.1:3001"; 
+        const backendUrl = "http://127.0.0.1:3001";
         try {
           const res = await fetch(`${backendUrl}/auth/login`, {
             method: "POST",
@@ -32,28 +32,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow relative URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allow same-origin URLs
+      if (new URL(url).origin === baseUrl) return url;
+      // Default to base if external
+      return baseUrl;
+    },
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id; // Default ID
-        
-    
+
+
         if (account?.provider === "google") {
           try {
-             const backendUrl = "http://127.0.0.1:3001";
-             const res = await fetch(`${backendUrl}/auth/sync`, {
-               method: "POST",
-               headers: { "Content-Type": "application/json" },
-               body: JSON.stringify({
-                 email: user.email,
-                 name: user.name,
-                 picture: user.image,
-               }),
-             });
-             if (res.ok) {
-               const dbUser = await res.json();
-               token.id = dbUser.id; 
-               token.credits = dbUser.credits;
-             }
+            const backendUrl = "http://127.0.0.1:3001";
+            const res = await fetch(`${backendUrl}/auth/sync`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: user.email,
+                name: user.name,
+                picture: user.image,
+              }),
+            });
+            if (res.ok) {
+              const dbUser = await res.json();
+              token.id = dbUser.id;
+              token.credits = dbUser.credits;
+            }
           } catch (e) { console.error("Sync failed", e); }
         }
       }
@@ -67,5 +75,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   session: { strategy: "jwt" },
-  pages: { signIn: "/login" }, 
+  pages: { signIn: "/login" },
 });

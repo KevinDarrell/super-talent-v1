@@ -1,16 +1,16 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState, Suspense } from "react"; 
-import { useRouter, useSearchParams } from "next/navigation"; 
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, ArrowLeft, Chrome } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const [isLoading, setIsLoading] = useState(false);
@@ -22,19 +22,24 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      const res = await signIn("credentials", { 
-        redirect: false, 
-        email, 
-        password 
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password
       });
-      
+
       if (res?.error) {
         toast.error("Invalid Email or Password");
         setIsLoading(false);
       } else {
         toast.success("Welcome back!");
-        router.push(callbackUrl);
-        router.refresh();
+        // Force hard navigation to callbackUrl
+        if (callbackUrl && callbackUrl !== "/") {
+          window.location.href = callbackUrl;
+        } else {
+          router.push("/");
+          router.refresh();
+        }
       }
     } catch (error) {
       toast.error("An unexpected error occurred.");
@@ -42,17 +47,17 @@ function LoginForm() {
     }
   };
 
- 
-  const handleGoogleLogin = () => {
-      setIsLoading(true);
-      toast.loading("Redirecting to Google...");
-      
-      
-      const separator = callbackUrl.includes('?') ? '&' : '?';
-      
-      const finalCallbackUrl = `${callbackUrl}${separator}login=success`;
 
-      signIn("google", { callbackUrl: finalCallbackUrl });
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
+    toast.loading("Redirecting to Google...");
+
+
+    const separator = callbackUrl.includes('?') ? '&' : '?';
+
+    const finalCallbackUrl = `${callbackUrl}${separator}login=success`;
+
+    signIn("google", { callbackUrl: finalCallbackUrl });
   };
 
   return (
@@ -60,8 +65,8 @@ function LoginForm() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[128px] pointer-events-none" />
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
-        <Link href="/" className="inline-flex items-center text-slate-500 hover:text-amber-400 mb-6 text-sm transition-colors"><ArrowLeft size={16} className="mr-1"/> Back to Home</Link>
-        
+        <Link href="/" className="inline-flex items-center text-slate-500 hover:text-amber-400 mb-6 text-sm transition-colors"><ArrowLeft size={16} className="mr-1" /> Back to Home</Link>
+
         <h1 className="text-2xl font-serif font-bold text-white mb-2 text-center">Welcome Back</h1>
         <p className="text-slate-400 text-sm text-center mb-8">Sign in to continue.</p>
 
@@ -81,12 +86,12 @@ function LoginForm() {
         </div>
 
         <button onClick={handleGoogleLogin} className="w-full h-12 bg-white text-slate-900 font-medium rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
-          <Chrome size={20} className="text-slate-900"/> Google
+          <Chrome size={20} className="text-slate-900" /> Google
         </button>
 
         <p className="mt-6 text-center text-sm text-slate-400">
           New here?{" "}
-          <Link href="/register" className="text-amber-400 hover:underline">
+          <Link href={callbackUrl && callbackUrl !== "/" ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/register"} className="text-amber-400 hover:underline">
             Create an account
           </Link>
         </p>
@@ -97,7 +102,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-amber-500"><Loader2 className="animate-spin" size={32}/></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-amber-500"><Loader2 className="animate-spin" size={32} /></div>}>
       <LoginForm />
     </Suspense>
   );
