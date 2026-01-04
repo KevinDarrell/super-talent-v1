@@ -17,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const backendUrl = "http://127.0.0.1:3001";
+        const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
         try {
           const res = await fetch(`${backendUrl}/auth/login`, {
             method: "POST",
@@ -47,7 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (account?.provider === "google") {
           try {
-            const backendUrl = "http://127.0.0.1:3001";
+            const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
             const res = await fetch(`${backendUrl}/auth/sync`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
