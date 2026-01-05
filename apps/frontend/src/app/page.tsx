@@ -22,8 +22,8 @@ export default function Home() {
   return (
     <div className="relative min-h-screen p-[clamp(1rem,4vw,2rem)] md:p-[clamp(1.5rem,5vw,3rem)] overflow-hidden">
       <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-amber-500/[0.04] rounded-full blur-[200px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/[0.03] rounded-full blur-[150px]" />
+        <div className="blur-decoration absolute top-0 left-1/3 w-[600px] h-[600px] bg-amber-500/[0.04] rounded-full blur-[200px]" />
+        <div className="blur-decoration absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/[0.03] rounded-full blur-[150px]" />
       </div>
 
       <motion.div

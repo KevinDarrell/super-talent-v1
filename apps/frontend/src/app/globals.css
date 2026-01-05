@@ -342,3 +342,31 @@ html.dark body::before {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Mobile Performance Optimization - Reduce heavy blur effects */
+@media (max-width: 768px) {
+
+  /* Reduce backdrop-blur on glass panels for better mobile rendering */
+  .glass-panel {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Hide heavy decorative blur backgrounds on mobile */
+  .blur-bg-mobile-hidden {
+    display: none !important;
+  }
+}
+
+/* Utility class for large decorative blurs that should hide on mobile */
+@layer utilities {
+  .blur-decoration {
+    @apply pointer-events-none;
+  }
+
+  @media (max-width: 768px) {
+    .blur-decoration {
+      display: none !important;
+    }
+  }
+}
