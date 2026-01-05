@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { LazyTiltCard } from "@/lib/dynamic-loading";
 import { RippleButton } from "@/components/ui/RippleButton";
+import { getApiBaseUrl } from "@/lib/api-url";
 
 function RegisterForm() {
   const router = useRouter();
@@ -25,7 +26,7 @@ function RegisterForm() {
     setIsLoading(true);
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const backendUrl = getApiBaseUrl();
       const res = await fetch(`${backendUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

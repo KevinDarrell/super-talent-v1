@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CvRecord, CvStatus } from "../types/analysis.types";
+import { getApiBaseUrl } from "@/lib/api-url";
 
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL = getApiBaseUrl();
 
 
 async function fetchCvStatus(cvId: string): Promise<CvRecord> {
