@@ -21,6 +21,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.api_route("/health", methods=["GET", "HEAD"])
+async def health_check():
+    """Health check endpoint for Docker healthcheck"""
+    return {"status": "healthy", "service": "ai-engine"}
+
 @app.post("/api/analyze")
 async def analyze_endpoint(
     file: UploadFile = File(...),

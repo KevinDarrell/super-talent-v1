@@ -45,7 +45,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Copy application code
-COPY src/ ./app/
+COPY src/ ./src/
 COPY main.py .
 
 # Change ownership to non-root user
