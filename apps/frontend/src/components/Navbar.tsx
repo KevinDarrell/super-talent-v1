@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles, LogOut, Moon, Sun, Monitor } from "lucide-react";
+import { Menu, X, Sparkles, LogOut, Moon, Sun, Monitor, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
+import { useProfileQuery } from "@/features/profile/api/useProfile";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -15,6 +16,14 @@ export function Navbar() {
   const toggleTheme = useTheme((s) => s.toggleTheme);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Fetch profile to get updated picture from database
+  const userId = session?.user?.id;
+  const { data: profile } = useProfileQuery(userId || null);
+
+  // Use profile picture from database, fallback to session image
+  const avatarUrl = profile?.picture || session?.user?.image;
+  const userName = profile?.name || session?.user?.name;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +44,7 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto">
           <nav
             className={cn(
-              "flex items-center justify-between px-6 py-3 rounded-full transition-all duration-500",
+              "flex items-center justify-between px-4 sm:px-6 py-3 rounded-full transition-all duration-500",
               isScrolled
                 ? "glass-panel shadow-lg"
                 : "bg-transparent border border-transparent"
@@ -77,12 +86,31 @@ export function Navbar() {
 
               {session ? (
                 <div className="flex items-center gap-3 pl-4 border-l border-black/10 dark:border-white/10">
-                  <div className="text-right hidden lg:block">
-                    <p className="text-xs text-slate-500">Welcome,</p>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white leading-none">
-                      {session.user?.name?.split(" ")[0]}
-                    </p>
-                  </div>
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-3 group"
+                    title="View Profile"
+                  >
+                    <div className="text-right hidden lg:block">
+                      <p className="text-xs text-slate-500">Welcome,</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white leading-none">
+                        {userName?.split(" ")[0]}
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent group-hover:border-amber-500 transition-all">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={userName || "Profile"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                          <User size={18} className="text-white" />
+                        </div>
+                      )}
+                    </div>
+                  </Link>
                   <button
                     onClick={() => signOut({ callbackUrl: "/login" })}
                     className="w-10 h-10 rounded-full glass-button flex items-center justify-center hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400 transition-all"
@@ -99,21 +127,38 @@ export function Navbar() {
             </div>
 
 
+            {/* Mobile header - show profile avatar + hamburger */}
             <div className="md:hidden flex items-center gap-2">
               <button
                 onClick={toggleTheme}
-                className="p-2.5 rounded-full glass-button transition-all duration-300"
+                className="p-2 rounded-full glass-button transition-all duration-300"
                 aria-label="Toggle theme"
-                title={mode === 'auto' ? 'Auto (System)' : mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
               >
                 {mode === 'auto' ? (
-                  <Monitor size={18} className="text-indigo-500" />
+                  <Monitor size={16} className="text-indigo-500" />
                 ) : resolvedTheme === 'dark' ? (
-                  <Sun size={18} className="text-amber-500" />
+                  <Sun size={16} className="text-amber-500" />
                 ) : (
-                  <Moon size={18} className="text-slate-700" />
+                  <Moon size={16} className="text-slate-700" />
                 )}
               </button>
+
+              {/* Mobile profile avatar */}
+              {session && (
+                <Link href="/profile" className="w-8 h-8 rounded-full overflow-hidden border-2 border-transparent hover:border-amber-500 transition-all">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={userName || "Profile"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                      <User size={14} className="text-white" />
+                    </div>
+                  )}
+                </Link>
+              )}
 
               <button
                 className="p-2 text-slate-900 dark:text-white"
@@ -143,12 +188,15 @@ export function Navbar() {
 
             <div className="mt-8 flex flex-col items-center gap-4">
               {session ? (
-                <button
-                  onClick={() => signOut()}
-                  className="px-8 py-3 rounded-full btn-ghost flex items-center gap-2"
-                >
-                  <LogOut size={18} /> Sign Out
-                </button>
+                <>
+                  <MobileLink href="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</MobileLink>
+                  <button
+                    onClick={() => signOut()}
+                    className="px-8 py-3 rounded-full btn-ghost flex items-center gap-2"
+                  >
+                    <LogOut size={18} /> Sign Out
+                  </button>
+                </>
               ) : (
                 <Link
                   href="/login"

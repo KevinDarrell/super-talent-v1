@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { CvModule } from './cv/cv.module';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -44,6 +45,7 @@ import { HealthController } from './health.controller';
     PrismaModule,
     CvModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [HealthController],
   providers: [
