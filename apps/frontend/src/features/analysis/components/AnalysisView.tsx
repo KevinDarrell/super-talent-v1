@@ -218,8 +218,8 @@ export function AnalysisView({ analysisResult, cvData }: AnalysisViewProps) {
                                                 initial={{ scale: 0 }}
                                                 animate={{ scale: 1 }}
                                                 className={`text-4xl font-bold ${selectedMetric.score >= 80 ? "text-[#3CE0B1]" :
-                                                        selectedMetric.score >= 60 ? "text-amber-500" :
-                                                            "text-red-500"
+                                                    selectedMetric.score >= 60 ? "text-amber-500" :
+                                                        "text-red-500"
                                                     }`}
                                             >
                                                 {selectedMetric.score}
@@ -501,12 +501,12 @@ export function AnalysisView({ analysisResult, cvData }: AnalysisViewProps) {
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                                         </motion.button>
                                         <motion.button
-                                            onClick={() => router.push("/")}
+                                            onClick={() => router.push("/app")}
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             className="px-6 py-3.5 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:border-[#2F6BFF]/50 hover:text-[#2F6BFF] dark:hover:text-white transition-all"
                                         >
-                                            Back Home
+                                            Back to Dashboard
                                         </motion.button>
                                     </div>
                                 </div>

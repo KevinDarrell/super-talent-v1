@@ -424,6 +424,27 @@ html.dark body::before {
   animation-delay: 300ms;
 }
 
+/* CV Bullet Points - Hanging Indent & Justified Text */
+.cv-bullet-list {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 1rem;
+}
+
+.cv-bullet-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.cv-bullet-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 @media print {
 
 
@@ -448,6 +469,25 @@ html.dark body::before {
   [contenteditable] {
     outline: none !important;
     background: transparent !important;
+  }
+
+  /* Hide all left borders and hover effects in print */
+  .border-l-4,
+  .border-l-2 {
+    border-left-color: transparent !important;
+    border-left-width: 0 !important;
+  }
+
+  /* Remove hover backgrounds in print */
+  .hover\:bg-slate-50:hover,
+  .hover\:border-blue-200:hover {
+    background: transparent !important;
+    border-color: transparent !important;
+  }
+
+  /* Ensure consistent section padding in print */
+  .group.relative.pl-4 {
+    padding-left: 0 !important;
   }
 }
 

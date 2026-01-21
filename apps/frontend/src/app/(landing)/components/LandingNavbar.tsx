@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { Sparkles, Menu, X, ArrowRight } from 'lucide-react';
+import { Sparkles, Menu, X, ArrowRight, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -15,6 +16,7 @@ export function LandingNavbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { scrollY } = useScroll();
+    const { data: session } = useSession();
 
     useMotionValueEvent(scrollY, 'change', (latest) => {
         setIsScrolled(latest > 50);
@@ -65,22 +67,34 @@ export function LandingNavbar() {
                         ))}
                     </div>
 
-                    {/* Right Side - Simple buttons */}
+                    {/* Right Side - Conditional buttons based on session */}
                     <div className="hidden md:flex items-center gap-3">
-                        <Link
-                            href="/login"
-                            className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-                        >
-                            Sign In
-                        </Link>
+                        {session ? (
+                            <Link
+                                href="/app"
+                                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+                            >
+                                <LayoutDashboard size={14} />
+                                Go to Dashboard
+                            </Link>
+                        ) : (
+                            <>
+                                <Link
+                                    href="/login"
+                                    className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                                >
+                                    Sign In
+                                </Link>
 
-                        <Link
-                            href="/app"
-                            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
-                        >
-                            Get Started
-                            <ArrowRight size={14} />
-                        </Link>
+                                <Link
+                                    href="/app"
+                                    className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+                                >
+                                    Get Started
+                                    <ArrowRight size={14} />
+                                </Link>
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -117,18 +131,31 @@ export function LandingNavbar() {
 
                                 <div className="h-px bg-slate-100 my-4" />
 
-                                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-4 text-xl font-medium text-slate-600">
-                                    Sign In
-                                </Link>
+                                {session ? (
+                                    <Link
+                                        href="/app"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white font-semibold rounded-xl mt-2"
+                                    >
+                                        <LayoutDashboard size={18} />
+                                        Go to Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-4 text-xl font-medium text-slate-600">
+                                            Sign In
+                                        </Link>
 
-                                <Link
-                                    href="/app"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white font-semibold rounded-xl mt-2"
-                                >
-                                    Get Started Free
-                                    <ArrowRight size={18} />
-                                </Link>
+                                        <Link
+                                            href="/app"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white font-semibold rounded-xl mt-2"
+                                        >
+                                            Get Started Free
+                                            <ArrowRight size={18} />
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </motion.div>

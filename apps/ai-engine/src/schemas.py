@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
+from typing import List, Optional
 
 class CriticalGap(BaseModel):
     gap: str = Field(..., description="The specific missing skill or weakness (e.g., 'Docker', 'Leadership')")
@@ -45,6 +45,14 @@ class CVProject(BaseModel):
     description: str
     highlights: List[str]
 
+class CVSectionLabels(BaseModel):
+    """Section labels for localization - uses fixed fields instead of Dict to avoid Gemini API issues"""
+    summary: str = "Professional Summary"
+    work_experience: str = "Work Experience"
+    technical_skills: str = "Technical Skills"
+    education: str = "Education"
+    projects: str = "Projects"
+
 class ImprovedCVResult(BaseModel):
     full_name: str
     professional_summary: str
@@ -55,10 +63,4 @@ class ImprovedCVResult(BaseModel):
     education: List[CVEducation]
     projects: List[CVProject]
     certifications: Optional[List[str]] = None
-    section_labels: Optional[Dict[str, str]] = Field(default_factory=lambda: {
-        "summary": "Professional Summary",
-        "work_experience": "Work Experience",
-        "technical_skills": "Technical Skills", 
-        "education": "Education",
-        "projects": "Projects"
-    })
+    section_labels: Optional[CVSectionLabels] = None

@@ -66,8 +66,10 @@ export function CvEditor({ printRef, highlightSection, isPreviewMode = false }: 
     };
   }, [isPreviewMode]);
 
-  const getLabel = (key: string, defaultVal: string) => cvData.section_labels?.[key] || defaultVal;
-  const setLabel = (key: string, val: string) => updateCvField(`section_labels.${key}`, val);
+  const getLabel = (key: keyof NonNullable<typeof cvData.section_labels>, defaultVal: string) =>
+    cvData.section_labels?.[key] || defaultVal;
+  const setLabel = (key: keyof NonNullable<typeof cvData.section_labels>, val: string) =>
+    updateCvField(`section_labels.${key}`, val);
 
   const renderSection = (type: SectionType) => {
     const uiOnly = "print:hidden";
@@ -91,7 +93,7 @@ export function CvEditor({ printRef, highlightSection, isPreviewMode = false }: 
     switch (type) {
       case "summary":
         return cvData.professional_summary ? (
-          <div className={cn(`group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent ${preventBreak}`, highlightClass)}>
+          <div className={cn(`group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent print:pl-0 print:border-l-0 ${preventBreak}`, highlightClass)}>
             <SectionHeader
               title={getLabel("summary", "Professional Summary")}
               onSave={(v) => setLabel("summary", v)}
@@ -107,7 +109,7 @@ export function CvEditor({ printRef, highlightSection, isPreviewMode = false }: 
 
       case "skills":
         return (cvData.hard_skills || []).length > 0 ? (
-          <div className={cn(`group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent ${preventBreak}`, highlightClass)}>
+          <div className={cn(`group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent print:pl-0 print:border-l-0 ${preventBreak}`, highlightClass)}>
             <SectionHeader
               title={getLabel("technical_skills", "Technical Skills")}
               onSave={(v) => setLabel("technical_skills", v)}
@@ -129,7 +131,7 @@ export function CvEditor({ printRef, highlightSection, isPreviewMode = false }: 
 
       case "experience":
         return (cvData.work_experience || []).length > 0 ? (
-          <div className={cn("group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent", highlightClass)}>
+          <div className={cn("group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent print:pl-0 print:border-l-0", highlightClass)}>
             <SectionHeader
               title={getLabel("work_experience", "Work Experience")}
               onSave={(v) => setLabel("work_experience", v)}
@@ -148,7 +150,7 @@ export function CvEditor({ printRef, highlightSection, isPreviewMode = false }: 
                     <Field tagName="span" className="text-[0.9em] font-medium text-slate-500 whitespace-nowrap ml-4" value={exp.dates} onSave={(v: string) => updateCvField(`work_experience[${i}].dates`, v)} />
                   </div>
                   <Field tagName="div" className="font-semibold mb-1" style={{ color: design.accentColor }} value={exp.company} onSave={(v: string) => updateCvField(`work_experience[${i}].company`, v)} />
-                  <ul className="list-disc pl-5 ml-2 space-y-0.5" style={{ listStylePosition: 'outside' }}>
+                  <ul className="cv-bullet-list space-y-0.5">
                     {(exp.achievements || []).map((bullet, idx) => (
                       <li key={idx} className="group/bullet text-slate-700">
                         <Field tagName="span" value={bullet} className="inline" onSave={(v: string) => { const newAch = [...exp.achievements]; newAch[idx] = v; updateCvField(`work_experience[${i}].achievements`, newAch); }} />
@@ -266,7 +268,7 @@ function renderProjects(
   onLabelSave: (v: string) => void
 ) {
   return (cvData.projects || []).length > 0 ? (
-    <div className="group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent">
+    <div className="group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent print:pl-0 print:border-l-0">
       <SectionHeader
         title={label}
         onSave={onLabelSave}
@@ -282,14 +284,14 @@ function renderProjects(
             <button onClick={() => remove("projects", i)} className={`absolute -right-6 top-0 opacity-0 group-hover/item:opacity-100 text-red-400 p-1 ${uiOnly}`}><Trash2 size={14} /></button>
             <h3 className="font-bold text-slate-900 text-[1.15em] leading-tight"><Field value={proj.name} onSave={(v: string) => update(`projects[${i}].name`, v)} /></h3>
             <div className="text-slate-600 mb-1"><Field tagName="p" value={proj.description} onSave={(v: string) => update(`projects[${i}].description`, v)} /></div>
-            <ul className="list-disc ml-5 pl-0 space-y-0.5" style={{ listStylePosition: 'outside' }}>
+            <ul className="cv-bullet-list space-y-0.5">
               {(proj.highlights || []).map((h, idx) => (
                 <li key={idx} className="group/bullet text-slate-700 relative">
                   <Field tagName="span" value={h} className="inline" onSave={(v: string) => { const nh = [...proj.highlights]; nh[idx] = v; update(`projects[${i}].highlights`, nh); }} />
                   <button onClick={() => { const nh = proj.highlights.filter((_, x) => x !== idx); update(`projects[${i}].highlights`, nh); }} className={`opacity-0 group-hover/bullet:opacity-100 text-red-300 ml-2 ${uiOnly}`}><Trash2 size={12} /></button>
                 </li>
               ))}
-              <button onClick={() => update(`projects[${i}].highlights`, [...proj.highlights, "New"])} className={`text-blue-400 hover:underline opacity-0 group-hover/item:opacity-100 text-left ml-4 mt-1 ${uiOnly}`}>+ Add highlight</button>
+              <button onClick={() => update(`projects[${i}].highlights`, [...proj.highlights, "New"])} className={`text-blue-400 hover:underline opacity-0 group-hover/item:opacity-100 text-left ml-5 mt-1 ${uiOnly}`}>+ Add highlight</button>
             </ul>
           </div>
         ))}
@@ -318,7 +320,7 @@ function renderEducation(
   onLabelSave: (v: string) => void
 ) {
   return (cvData.education || []).length > 0 ? (
-    <div className="group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent">
+    <div className="group relative pl-4 hover:border-l-4 hover:border-blue-200 transition-all rounded p-2 hover:bg-slate-50 border-l-4 border-transparent print:pl-0 print:border-l-0">
       <SectionHeader
         title={label}
         onSave={onLabelSave}

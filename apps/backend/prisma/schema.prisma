@@ -8,16 +8,18 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  googleId  String?  @unique
-  name      String?
-  picture   String?
-  password  String?
-  credits   Int      @default(3)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  cvs       CV[]
+  id                String   @id @default(uuid())
+  email             String   @unique
+  googleId          String?  @unique
+  name              String?
+  picture           String?
+  password          String?
+  credits           Int      @default(1)
+  lastCreditRefresh DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  cvs               CV[]
+  transactions      CreditTransaction[]
 }
 
 model CV {
@@ -37,9 +39,27 @@ model CV {
   updatedAt      DateTime  @updatedAt
 }
 
+model CreditTransaction {
+  id             String            @id @default(uuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  amount         Int               // Credits purchased
+  priceIdr       Int               // Price in IDR
+  mayarPaymentId String?           @unique
+  status         TransactionStatus @default(PENDING)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
 enum CvStatus {
   PENDING
   PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TransactionStatus {
+  PENDING
   COMPLETED
   FAILED
 }

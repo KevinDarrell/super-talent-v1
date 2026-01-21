@@ -28,6 +28,14 @@ export interface CvProject {
     technologies?: string[];
 }
 
+export interface CvSectionLabels {
+    summary?: string;
+    work_experience?: string;
+    technical_skills?: string;
+    education?: string;
+    projects?: string;
+}
+
 export interface CvData {
     full_name: string;
     professional_summary: string;
@@ -38,7 +46,7 @@ export interface CvData {
     education: CvEducation[];
     projects: CvProject[];
     certifications?: string[];
-    section_labels?: Record<string, string>;
+    section_labels?: CvSectionLabels;
 }
 
 export interface DesignSettings {

@@ -82,9 +82,8 @@ export default function StoryLanding() {
                             </p>
                         </div>
 
-                        {/* Right: Link Columns */}
-                        <div className="lg:w-2/3 grid grid-cols-2 md:grid-cols-3 gap-8">
-                            {/* Product */}
+                        {/* Right: Product Links */}
+                        <div className="lg:flex-1 flex justify-center lg:justify-end">
                             <div>
                                 <h4 className="font-semibold text-slate-900 mb-4">Product</h4>
                                 <ul className="space-y-3 text-sm">
@@ -92,28 +91,6 @@ export default function StoryLanding() {
                                     <li><a href="#features" className="hover:text-[#2F6BFF] transition-colors">Features</a></li>
                                     <li><a href="#pricing" className="hover:text-[#2F6BFF] transition-colors">Pricing</a></li>
                                     <li><a href="#faq" className="hover:text-[#2F6BFF] transition-colors">FAQ</a></li>
-                                </ul>
-                            </div>
-
-                            {/* Company */}
-                            <div>
-                                <h4 className="font-semibold text-slate-900 mb-4">Company</h4>
-                                <ul className="space-y-3 text-sm">
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">About Us</a></li>
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Blog</a></li>
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Careers</a></li>
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Contact</a></li>
-                                </ul>
-                            </div>
-
-                            {/* Support */}
-                            <div>
-                                <h4 className="font-semibold text-slate-900 mb-4">Support</h4>
-                                <ul className="space-y-3 text-sm">
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Help Center</a></li>
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Documentation</a></li>
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Privacy</a></li>
-                                    <li><a href="#" className="hover:text-[#2F6BFF] transition-colors">Terms</a></li>
                                 </ul>
                             </div>
                         </div>
