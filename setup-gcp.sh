@@ -8,7 +8,7 @@ sudo apt-get update
 sudo apt-get upgrade -y
 
 echo "Installing prerequisites..."
-sudo apt-get install -y ca-certificates curl gnupg lsb-release
+sudo apt-get install -y ca-certificates curl gnupg lsb-release git git
 
 echo "Adding Docker's official GPG key..."
 sudo mkdir -p /etc/apt/keyrings
