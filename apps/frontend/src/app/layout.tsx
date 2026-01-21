@@ -76,23 +76,6 @@ export default function RootLayout({
             </Suspense>
           </QueryProvider>
         </AuthProvider>
-
-        {/* Dify AI Career Coach Chatbot */}
-        <Script id="dify-config" strategy="lazyOnload">
-          {`
-            window.difyChatbotConfig = {
-              token: 'lW6CLN40cB6KdrxB',
-              inputs: {},
-              systemVariables: {},
-              userVariables: {},
-            }
-          `}
-        </Script>
-        <Script
-          src="https://udify.app/embed.min.js"
-          id="lW6CLN40cB6KdrxB"
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );
