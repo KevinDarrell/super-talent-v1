@@ -571,3 +571,13 @@ html.dark body::before {
     }
   }
 }
+
+/* Dify AI Career Coach Chatbot */
+#dify-chatbot-bubble-button {
+  background-color: #1C64F2 !important;
+}
+
+#dify-chatbot-bubble-window {
+  width: 24rem !important;
+  height: 40rem !important;
+}

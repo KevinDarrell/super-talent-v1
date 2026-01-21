@@ -93,15 +93,6 @@ export default function RootLayout({
           id="lW6CLN40cB6KdrxB"
           strategy="lazyOnload"
         />
-        <style jsx global>{`
-          #dify-chatbot-bubble-button {
-            background-color: #1C64F2 !important;
-          }
-          #dify-chatbot-bubble-window {
-            width: 24rem !important;
-            height: 40rem !important;
-          }
-        `}</style>
       </body>
     </html>
   );
