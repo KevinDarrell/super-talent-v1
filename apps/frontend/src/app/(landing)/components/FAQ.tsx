@@ -27,7 +27,7 @@ const faqs = [
     },
     {
         question: 'Can I try it for free?',
-        answer: 'Yes! Our free plan gives you 3 CV analyses per month with basic insights. No credit card required to sign up.',
+        answer: 'Yes! You get 1 free credit every day (when you have 0 credits). Each credit lets you analyze one CV with full insights. No credit card required to sign up.',
         category: 'Pricing',
     },
     {
