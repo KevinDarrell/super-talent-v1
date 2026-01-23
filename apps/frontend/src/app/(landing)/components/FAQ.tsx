@@ -88,9 +88,9 @@ export function FAQ() {
                             transition={{ delay: index * 0.08 }}
                             className="group"
                         >
-                            <div className={`bg-white rounded-2xl border-2 transition-all duration-300 overflow-hidden ${openIndex === index
-                                    ? 'border-[#2F6BFF]/30 shadow-lg shadow-[#2F6BFF]/5'
-                                    : 'border-slate-100 hover:border-slate-200 hover:shadow-md'
+                            <div className={`bg-white rounded-2xl border-2 transition-all duration-300 overflow-hidden card-hover-lift ${openIndex === index
+                                ? 'border-[#2F6BFF]/30 shadow-lg shadow-[#2F6BFF]/5'
+                                : 'border-slate-100 hover:border-slate-200 hover:shadow-md'
                                 }`}>
                                 <button
                                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
@@ -99,8 +99,8 @@ export function FAQ() {
                                     <div className="flex items-center gap-4 pr-4">
                                         {/* Number */}
                                         <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 transition-colors ${openIndex === index
-                                                ? 'bg-[#2F6BFF] text-white'
-                                                : 'bg-slate-100 text-slate-400'
+                                            ? 'bg-[#2F6BFF] text-white'
+                                            : 'bg-slate-100 text-slate-400'
                                             }`}>
                                             {index + 1}
                                         </span>
@@ -114,8 +114,8 @@ export function FAQ() {
                                         animate={{ rotate: openIndex === index ? 180 : 0 }}
                                         transition={{ duration: 0.2 }}
                                         className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openIndex === index
-                                                ? 'bg-[#2F6BFF] text-white'
-                                                : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200'
+                                            ? 'bg-[#2F6BFF] text-white'
+                                            : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200'
                                             }`}
                                     >
                                         {openIndex === index ? <Minus size={18} /> : <Plus size={18} />}

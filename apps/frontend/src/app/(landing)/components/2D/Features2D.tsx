@@ -99,10 +99,10 @@ export function Features2D() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}
-                            className="group glass-panel rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300 hover:shadow-lg"
+                            className="group glass-panel rounded-2xl p-6 transition-all duration-300 card-hover-lift card-gradient-border"
                         >
-                            {/* Icon */}
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${feature.color}`}>
+                            {/* Icon with hover bounce */}
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${feature.color} icon-hover-bounce`}>
                                 <feature.icon size={22} />
                             </div>
 

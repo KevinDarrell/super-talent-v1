@@ -15,7 +15,7 @@ interface TextSplitProps {
  * 
  * Animates text word by word.
  */
-export function TextSplit({ children, className = '', delay = 0, wordDelay = 0.05 }: TextSplitProps) {
+export function TextSplit({ children, className = '', delay = 0, wordDelay = 0.12 }: TextSplitProps) {
     const words = children.split(' ');
 
     return (
@@ -26,7 +26,7 @@ export function TextSplit({ children, className = '', delay = 0, wordDelay = 0.0
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
-                        duration: 0.5,
+                        duration: 0.7,
                         delay: delay + index * wordDelay,
                         ease: [0.25, 0.1, 0.25, 1],
                     }}

@@ -9,3 +9,5 @@ export { TextSplit } from './TextSplit';
 export { LiveStats } from './LiveStats';
 export { GlowOrbs } from './GlowOrbs';
 export { GridPattern } from './GridPattern';
+export { AnimatedCounter } from './AnimatedCounter';
+

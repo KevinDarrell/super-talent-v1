@@ -17,7 +17,7 @@ export function FinalCTA() {
     return (
         <section
             ref={containerRef}
-            className="py-20 px-6 bg-slate-50"
+            className="py-20 px-6 bg-slate-50 cta-animated-bg"
         >
             <div className="container mx-auto">
                 {/* CTA Card */}
@@ -71,10 +71,10 @@ export function FinalCTA() {
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <Link
                                 href="/app"
-                                className="inline-flex items-center justify-center gap-2 bg-white text-[#2F6BFF] font-bold px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
+                                className="inline-flex items-center justify-center gap-2 bg-white text-[#2F6BFF] font-bold px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors shadow-lg btn-hover-lift btn-arrow-slide badge-pulse"
                             >
                                 Start Free Analysis
-                                <ArrowRight size={18} />
+                                <ArrowRight size={18} className="arrow-icon" />
                             </Link>
                         </motion.div>
                     </div>

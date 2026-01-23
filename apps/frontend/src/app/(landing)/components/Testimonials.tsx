@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Star, Quote, Users, Award, TrendingUp } from 'lucide-react';
+import { AnimatedCounter } from './effects';
 
 const testimonials = [
     {
@@ -93,7 +94,7 @@ export function Testimonials() {
                             {/* Hover glow */}
                             <div className="absolute -inset-2 bg-gradient-to-r from-[#2F6BFF]/20 to-[#3CE0B1]/20 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
 
-                            <div className="relative bg-white rounded-2xl p-8 border border-slate-100 h-full transition-all duration-300 group-hover:border-transparent group-hover:shadow-2xl">
+                            <div className="relative bg-white rounded-2xl p-8 border border-slate-100 h-full transition-all duration-300 group-hover:border-transparent group-hover:shadow-2xl card-hover-lift">
                                 {/* Quote icon */}
                                 <div className="absolute -top-4 right-6 w-10 h-10 rounded-xl bg-gradient-to-br from-[#2F6BFF] to-[#3CE0B1] flex items-center justify-center shadow-lg">
                                     <Quote size={18} className="text-white" />
@@ -130,7 +131,7 @@ export function Testimonials() {
                                         <img
                                             src={testimonial.image}
                                             alt={testimonial.name}
-                                            className="relative w-14 h-14 rounded-full object-cover border-2 border-white"
+                                            className="relative w-14 h-14 rounded-full object-cover border-2 border-white avatar-hover-zoom"
                                         />
                                     </div>
                                     <div>

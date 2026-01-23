@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { FloatingCV } from './FloatingCV';
-import { AnimatedGradient, FloatingParticles, TextSplit, GlowOrbs, GridPattern } from './effects';
+import { AnimatedGradient, FloatingParticles, TextSplit, GlowOrbs, GridPattern, AnimatedCounter } from './effects';
 
 /**
  * StoryHero Component
@@ -38,14 +38,14 @@ export function StoryHero() {
                     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                         {/* Left: Content */}
                         <div className="order-2 lg:order-1">
-                            {/* Badge */}
+                            {/* Badge with pulse animation */}
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-[#2F6BFF]/10 rounded-full text-[#2F6BFF] text-sm font-medium mb-6"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-[#2F6BFF]/10 rounded-full text-[#2F6BFF] text-sm font-medium mb-6 badge-glow"
                             >
-                                <Sparkles size={14} />
+                                <Sparkles size={14} className="icon-hover-rotate" />
                                 <span>AI-Powered CV Optimization</span>
                             </motion.div>
 
@@ -55,11 +55,14 @@ export function StoryHero() {
                                     Stop Getting Rejected.
                                 </TextSplit>
                                 <br />
-                                <span className="text-gradient-primary">
-                                    <TextSplit delay={0.6}>
-                                        Start Getting Hired.
-                                    </TextSplit>
-                                </span>
+                                <motion.span
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+                                    className="text-gradient-primary inline-block py-2"
+                                >
+                                    Start Getting Hired.
+                                </motion.span>
                             </h1>
 
                             {/* Description */}
@@ -101,8 +104,8 @@ export function StoryHero() {
                                     </div>
                                 </Link>
 
-                                {/* Secondary CTA - Clean outline style */}
-                                <a href="#demo" className="group flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-slate-200 hover:border-[#2F6BFF] text-slate-700 hover:text-[#2F6BFF] font-semibold rounded-xl transition-all duration-300">
+                                {/* Secondary CTA - Clean outline style with lift effect */}
+                                <a href="#demo" className="group flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-slate-200 hover:border-[#2F6BFF] text-slate-700 hover:text-[#2F6BFF] font-semibold rounded-xl transition-all duration-300 btn-hover-lift">
                                     <span className="text-lg">See How It Works</span>
                                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                                 </a>
@@ -115,22 +118,38 @@ export function StoryHero() {
                                 transition={{ duration: 0.5, delay: 1.2 }}
                                 className="flex flex-wrap gap-6"
                             >
-                                {[
-                                    { value: '10,000+', label: 'CVs Optimized' },
-                                    { value: '95%', label: 'ATS Pass Rate' },
-                                    { value: '3×', label: 'More Interviews' },
-                                ].map((stat, i) => (
-                                    <motion.div
-                                        key={stat.label}
-                                        className="text-center"
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 1.3 + i * 0.1 }}
-                                    >
-                                        <div className="text-2xl font-bold text-[#2F6BFF]">{stat.value}</div>
-                                        <div className="text-xs text-slate-500">{stat.label}</div>
-                                    </motion.div>
-                                ))}
+                                {/* Animated Stats */}
+                                <motion.div
+                                    className="text-center"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1.3 }}
+                                >
+                                    <div className="text-2xl font-bold text-[#2F6BFF]">
+                                        <AnimatedCounter end={10000} suffix="+" duration={2000} />
+                                    </div>
+                                    <div className="text-xs text-slate-500">CVs Optimized</div>
+                                </motion.div>
+                                <motion.div
+                                    className="text-center"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1.4 }}
+                                >
+                                    <div className="text-2xl font-bold text-[#2F6BFF]">
+                                        <AnimatedCounter end={95} suffix="%" duration={1500} />
+                                    </div>
+                                    <div className="text-xs text-slate-500">ATS Pass Rate</div>
+                                </motion.div>
+                                <motion.div
+                                    className="text-center"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1.5 }}
+                                >
+                                    <div className="text-2xl font-bold text-[#2F6BFF]">3×</div>
+                                    <div className="text-xs text-slate-500">More Interviews</div>
+                                </motion.div>
                             </motion.div>
                         </div>
 

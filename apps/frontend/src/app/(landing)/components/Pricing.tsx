@@ -145,7 +145,7 @@ export function Pricing() {
                             <motion.div
                                 whileHover={{ y: -8 }}
                                 transition={{ type: 'spring', stiffness: 300 }}
-                                className={`relative bg-white rounded-2xl p-8 h-full transition-all duration-300 ${pkg.popular
+                                className={`relative bg-white rounded-2xl p-8 h-full transition-all duration-300 card-gradient-border ${pkg.popular
                                     ? 'border-2 border-[#2F6BFF] shadow-2xl'
                                     : 'border border-slate-200 hover:border-slate-300 hover:shadow-xl'
                                     }`}

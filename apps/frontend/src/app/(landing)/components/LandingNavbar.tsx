@@ -55,7 +55,7 @@ export function LandingNavbar() {
                             <a
                                 key={link.href}
                                 href={link.href}
-                                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-[#2F6BFF] transition-colors rounded-xl hover:bg-white/50"
+                                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-[#2F6BFF] transition-colors rounded-xl hover:bg-white/50 link-underline-animated"
                             >
                                 {link.label}
                             </a>
@@ -67,7 +67,7 @@ export function LandingNavbar() {
                         {session ? (
                             <Link
                                 href="/app"
-                                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+                                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity btn-hover-lift"
                             >
                                 <LayoutDashboard size={14} />
                                 Go to Dashboard
@@ -83,10 +83,10 @@ export function LandingNavbar() {
 
                                 <Link
                                     href="/app"
-                                    className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+                                    className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity btn-hover-lift btn-arrow-slide"
                                 >
                                     Get Started
-                                    <ArrowRight size={14} />
+                                    <ArrowRight size={14} className="arrow-icon" />
                                 </Link>
                             </>
                         )}
