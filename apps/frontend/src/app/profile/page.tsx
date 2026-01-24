@@ -100,9 +100,8 @@ export default function ProfilePage() {
     }
 
     // Check if user has a password (for showing account settings)
-    // This is a heuristic - users who signed up via OAuth typically don't have a password
-    // For now, we'll assume they can change password if they have one set
-    const hasPassword = true; // Backend will handle the actual check
+    // Users who signed up via OAuth (have googleId) typically don't have a password
+    const hasPassword = !profile.googleId;
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white transition-colors pb-8 overflow-hidden">
@@ -149,7 +148,7 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Bottom row: CV History + Password */}
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className={hasPassword ? "grid md:grid-cols-2 gap-6" : "space-y-6"}>
                         <CvHistoryList cvs={cvs || []} isLoading={cvsLoading} />
                         <AccountSettings userId={profile.id} hasPassword={hasPassword} />
                     </div>

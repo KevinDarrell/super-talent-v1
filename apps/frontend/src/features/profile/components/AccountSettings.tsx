@@ -45,39 +45,7 @@ export function AccountSettings({ userId, hasPassword }: AccountSettingsProps) {
     const isValid = currentPassword.length > 0 && newPassword.length >= 6 && passwordsMatch;
 
     if (!hasPassword) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                whileHover={{ y: -2 }}
-                className="group bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 shadow-lg shadow-slate-200/80 dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-800 relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#2F6BFF]/30 h-full"
-            >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#2F6BFF]/5 to-[#3CE0B1]/5 rounded-2xl" />
-                </div>
-
-                <div className="relative">
-                    <div className="flex items-center gap-3 mb-4">
-                        <motion.div
-                            whileHover={{ scale: 1.1, rotate: -5 }}
-                            className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#2F6BFF] to-[#3CE0B1] flex items-center justify-center shadow-lg shadow-[#2F6BFF]/20"
-                        >
-                            <Shield size={20} className="text-white" />
-                        </motion.div>
-                        <div>
-                            <h3 className="text-base font-bold text-slate-900 dark:text-white">Security</h3>
-                            <p className="text-xs text-slate-500">Account protection</p>
-                        </div>
-                    </div>
-                    <div className="p-4 bg-gradient-to-r from-[#2F6BFF]/5 to-[#3CE0B1]/5 rounded-xl border border-[#2F6BFF]/10">
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                            🔒 You signed in with Google. Password is managed by your Google account.
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-        );
+        return null;
     }
 
     return (

@@ -14,6 +14,7 @@ export interface UserProfile {
     email: string;
     name: string | null;
     picture: string | null;
+    googleId: string | null;
     credits: number;
     createdAt: string;
     updatedAt: string;

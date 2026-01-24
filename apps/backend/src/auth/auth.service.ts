@@ -6,8 +6,8 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(private prisma: PrismaService) { }
 
-  async syncUser(userDto: { email: string; name?: string; picture?: string }) {
-    const { email, name, picture } = userDto;
+  async syncUser(userDto: { email: string; name?: string; picture?: string; googleId?: string }) {
+    const { email, name, picture, googleId } = userDto;
     let user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
@@ -17,8 +17,15 @@ export class AuthService {
           name,
           picture,
           credits: 1,
+          googleId,
           lastCreditRefresh: new Date(),
         },
+      });
+    } else if (googleId && !user.googleId) {
+      // Link Google account to existing user if not already linked
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: { googleId },
       });
     }
 
