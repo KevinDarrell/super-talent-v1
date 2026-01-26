@@ -3,11 +3,10 @@
 import { signIn } from "next-auth/react";
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, Sparkles, Eye, EyeOff, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { RippleButton } from "@/components/ui/RippleButton";
 
 // Abstract Geometric Illustration
 function AbstractIllustration() {
@@ -118,168 +117,12 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
 };
 
-const shakeVariants = {
-  shake: {
-    x: [0, -10, 10, -10, 10, 0],
-    transition: { duration: 0.5 },
-  },
-};
-
-// Success overlay component
-function SuccessOverlay({ show, message }: { show: boolean; message: string }) {
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-            className="flex flex-col items-center"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2F6BFF] to-[#3CE0B1] flex items-center justify-center mb-4"
-            >
-              <CheckCircle2 size={40} className="text-white" />
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl font-semibold text-slate-900 dark:text-white"
-            >
-              {message}
-            </motion.p>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// Enhanced input with glow
-function GlowInput({
-  type, placeholder, value, onChange, required, hasError, className = ""
-}: {
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  hasError?: boolean;
-  className?: string;
-}) {
-  const [isFocused, setIsFocused] = useState(false);
-
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="relative"
-    >
-      <motion.div
-        variants={shakeVariants}
-        animate={hasError ? "shake" : undefined}
-      >
-        <motion.div
-          animate={{
-            boxShadow: hasError
-              ? "0 0 0 4px rgba(239, 68, 68, 0.2), 0 0 20px rgba(239, 68, 68, 0.1)"
-              : isFocused
-                ? "0 0 0 4px rgba(47, 107, 255, 0.15), 0 0 20px rgba(47, 107, 255, 0.1)"
-                : "0 0 0 0px rgba(47, 107, 255, 0)"
-          }}
-          transition={{ duration: 0.2 }}
-          className="rounded-xl"
-        >
-          <input
-            type={type}
-            placeholder={placeholder}
-            required={required}
-            value={value}
-            onChange={onChange}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className={`w-full bg-slate-50 dark:bg-slate-900 border-2 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none transition-all duration-300 ${hasError
-              ? "border-red-500 bg-red-50 dark:bg-red-950/20"
-              : isFocused
-                ? "border-[#2F6BFF] bg-white dark:bg-slate-800"
-                : "border-slate-200 dark:border-slate-800"
-              } ${className}`}
-          />
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/app";
 
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setHasError(false);
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setHasError(true);
-      toast.error("Please enter a valid email address");
-      setIsLoading(false);
-      setTimeout(() => setHasError(false), 600);
-      return;
-    }
-
-    try {
-      const res = await signIn("credentials", {
-        redirect: false,
-        email,
-        password
-      });
-
-      if (res?.error) {
-        setHasError(true);
-        toast.error("Invalid Email or Password");
-        setIsLoading(false);
-        // Reset error state after animation
-        setTimeout(() => setHasError(false), 600);
-      } else {
-        setShowSuccess(true);
-        toast.success("Welcome back!");
-        setTimeout(() => {
-          if (callbackUrl && callbackUrl !== "/") {
-            window.location.href = callbackUrl;
-          } else {
-            router.push("/app");
-            router.refresh();
-          }
-        }, 1000);
-      }
-    } catch (error) {
-      setHasError(true);
-      toast.error("An unexpected error occurred.");
-      setIsLoading(false);
-      setTimeout(() => setHasError(false), 600);
-    }
-  };
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
@@ -291,8 +134,6 @@ function LoginForm() {
 
   return (
     <>
-      <SuccessOverlay show={showSuccess} message="Welcome back!" />
-
       <div className="min-h-screen flex">
         {/* Left Panel */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#2F6BFF] via-[#4B7FFF] to-[#3CE0B1] relative overflow-hidden">
@@ -363,84 +204,6 @@ function LoginForm() {
                 Continue with Google
               </motion.button>
             </motion.div>
-
-            <motion.div variants={itemVariants} className="flex items-center gap-4 mb-6">
-              <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
-              <span className="text-xs uppercase text-slate-400 tracking-wider">or</span>
-              <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
-            </motion.div>
-
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              <GlowInput
-                type="email"
-                placeholder="Email Address"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                hasError={hasError}
-              />
-
-              <motion.div variants={itemVariants} className="relative">
-                <motion.div
-                  variants={shakeVariants}
-                  animate={hasError ? "shake" : undefined}
-                >
-                  <motion.div
-                    animate={{
-                      boxShadow: hasError
-                        ? "0 0 0 4px rgba(239, 68, 68, 0.2)"
-                        : isPasswordFocused
-                          ? "0 0 0 4px rgba(47, 107, 255, 0.15), 0 0 20px rgba(47, 107, 255, 0.1)"
-                          : "0 0 0 0px rgba(47, 107, 255, 0)"
-                    }}
-                    transition={{ duration: 0.2 }}
-                    className="rounded-xl"
-                  >
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      required
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
-                      className={`w-full bg-slate-50 dark:bg-slate-900 border-2 rounded-xl px-4 py-3.5 pr-12 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none transition-all duration-300 ${hasError
-                        ? "border-red-500 bg-red-50 dark:bg-red-950/20"
-                        : isPasswordFocused
-                          ? "border-[#2F6BFF] bg-white dark:bg-slate-800"
-                          : "border-slate-200 dark:border-slate-800"
-                        }`}
-                    />
-                  </motion.div>
-                </motion.div>
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <motion.div
-                  whileHover={{ scale: 1.02, boxShadow: "0 10px 40px rgba(47, 107, 255, 0.3)" }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <RippleButton
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    disabled={isLoading}
-                    className="w-full h-14"
-                  >
-                    {isLoading ? <Loader2 className="animate-spin" /> : (
-                      <>Sign In <ArrowRight size={18} className="ml-2" /></>
-                    )}
-                  </RippleButton>
-                </motion.div>
-              </motion.div>
-            </form>
 
             <motion.p variants={itemVariants} className="mt-8 text-center text-sm text-slate-500">
               Don't have an account?{" "}

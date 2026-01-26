@@ -10,27 +10,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: { params: { prompt: "select_account" } },
     }),
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
-        try {
-          const res = await fetch(`${backendUrl}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(credentials),
-          });
-          const user = await res.json();
-          if (res.ok && user) return user;
-          return null;
-        } catch (error) { return null; }
-      },
-    }),
+    // Credentials({
+    //   name: "Credentials",
+    //   credentials: {
+    //     email: { label: "Email", type: "email" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   async authorize(credentials) {
+    //     if (!credentials?.email || !credentials?.password) return null;
+    //     const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
+    //     try {
+    //       const res = await fetch(`${backendUrl}/auth/login`, {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify(credentials),
+    //       });
+    //       const user = await res.json();
+    //       if (res.ok && user) return user;
+    //       return null;
+    //     } catch (error) { return null; }
+    //   },
+    // }),
   ],
   callbacks: {
     async redirect({ url, baseUrl }) {

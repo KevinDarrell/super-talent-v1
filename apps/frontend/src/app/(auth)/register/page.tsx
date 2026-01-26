@@ -1,14 +1,12 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState, Suspense, useMemo } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, Sparkles, Eye, EyeOff, ArrowRight, Check, CheckCircle2 } from "lucide-react";
+import { Loader2, Sparkles, Check } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { RippleButton } from "@/components/ui/RippleButton";
-import { getApiBaseUrl } from "@/lib/api-url";
 
 // Abstract Geometric Illustration for Register
 function AbstractIllustration() {
@@ -123,232 +121,12 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
 };
 
-// Password strength meter
-function PasswordStrengthMeter({ password }: { password: string }) {
-  const strength = useMemo(() => {
-    if (!password) return { score: 0, label: "", color: "" };
-
-    let score = 0;
-    if (password.length >= 6) score++;
-    if (password.length >= 8) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-
-    if (score <= 1) return { score: 1, label: "Weak", color: "#ef4444" };
-    if (score <= 2) return { score: 2, label: "Fair", color: "#f59e0b" };
-    if (score <= 3) return { score: 3, label: "Good", color: "#3CE0B1" };
-    return { score: 4, label: "Strong", color: "#22c55e" };
-  }, [password]);
-
-  if (!password) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      className="mt-2"
-    >
-      <div className="flex gap-1 mb-1">
-        {[1, 2, 3, 4].map((level) => (
-          <motion.div
-            key={level}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: level * 0.05 }}
-            className="h-1.5 flex-1 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700"
-          >
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: level <= strength.score ? "100%" : "0%" }}
-              transition={{ duration: 0.3, delay: level * 0.05 }}
-              className="h-full rounded-full"
-              style={{ backgroundColor: level <= strength.score ? strength.color : "transparent" }}
-            />
-          </motion.div>
-        ))}
-      </div>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="text-xs font-medium"
-        style={{ color: strength.color }}
-      >
-        {strength.label}
-      </motion.p>
-    </motion.div>
-  );
-}
-
-// Success overlay
-function SuccessOverlay({ show, message }: { show: boolean; message: string }) {
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-            className="flex flex-col items-center"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-[#3CE0B1] to-[#2F6BFF] flex items-center justify-center mb-4"
-            >
-              <CheckCircle2 size={40} className="text-white" />
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl font-semibold text-slate-900 dark:text-white"
-            >
-              {message}
-            </motion.p>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// Enhanced input with glow
-function GlowInput({
-  type, placeholder, value, onChange, required, minLength, hasError, className = ""
-}: {
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  minLength?: number;
-  hasError?: boolean;
-  className?: string;
-}) {
-  const [isFocused, setIsFocused] = useState(false);
-
-  return (
-    <motion.div variants={itemVariants} className="relative">
-      <motion.div
-        animate={{
-          boxShadow: hasError
-            ? "0 0 0 4px rgba(239, 68, 68, 0.2)"
-            : isFocused
-              ? "0 0 0 4px rgba(60, 224, 177, 0.15), 0 0 20px rgba(60, 224, 177, 0.1)"
-              : "0 0 0 0px rgba(60, 224, 177, 0)"
-        }}
-        transition={{ duration: 0.2 }}
-        className="rounded-xl"
-      >
-        <input
-          type={type}
-          placeholder={placeholder}
-          required={required}
-          minLength={minLength}
-          value={value}
-          onChange={onChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          className={`w-full bg-slate-50 dark:bg-slate-900 border-2 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none transition-all duration-300 ${hasError
-            ? "border-red-500 bg-red-50 dark:bg-red-950/20"
-            : isFocused
-              ? "border-[#3CE0B1] bg-white dark:bg-slate-800"
-              : "border-slate-200 dark:border-slate-800"
-            } ${className}`}
-        />
-      </motion.div>
-    </motion.div>
-  );
-}
-
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/app";
 
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setHasError(false);
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setHasError(true);
-      toast.error("Please enter a valid email address");
-      setIsLoading(false);
-      setTimeout(() => setHasError(false), 600);
-      return;
-    }
-
-    try {
-      const backendUrl = getApiBaseUrl();
-      const res = await fetch(`${backendUrl}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setHasError(true);
-        const errorMessage = Array.isArray(data.message)
-          ? data.message.join(", ")
-          : data.message || "Registration failed";
-        toast.error(errorMessage);
-        setIsLoading(false);
-        setTimeout(() => setHasError(false), 600);
-        return;
-      }
-
-      setShowSuccess(true);
-      toast.success("Account created!");
-
-      setTimeout(async () => {
-        const loginRes = await signIn("credentials", {
-          redirect: false,
-          email,
-          password
-        });
-
-        if (loginRes?.error) {
-          toast.warning("Please login with your new account.");
-          router.push("/login");
-        } else {
-          if (callbackUrl && callbackUrl !== "/") {
-            window.location.href = callbackUrl;
-          } else {
-            router.push("/app");
-            router.refresh();
-          }
-        }
-      }, 1000);
-    } catch (error) {
-      setHasError(true);
-      toast.error("Registration failed.");
-      setIsLoading(false);
-      setTimeout(() => setHasError(false), 600);
-    }
-  };
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
@@ -360,8 +138,6 @@ function RegisterForm() {
 
   return (
     <>
-      <SuccessOverlay show={showSuccess} message="Account created!" />
-
       <div className="min-h-screen flex">
         {/* Left Panel */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#3CE0B1] via-[#2DD4A8] to-[#2F6BFF] relative overflow-hidden">
@@ -433,98 +209,7 @@ function RegisterForm() {
               </motion.button>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="flex items-center gap-4 mb-6">
-              <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
-              <span className="text-xs uppercase text-slate-400 tracking-wider">or</span>
-              <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
-            </motion.div>
-
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              <GlowInput
-                type="text"
-                placeholder="Full Name"
-                required
-                value={name}
-                onChange={e => setName(e.target.value)}
-                hasError={hasError}
-              />
-              <GlowInput
-                type="email"
-                placeholder="Email Address"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                hasError={hasError}
-              />
-
-              <motion.div variants={itemVariants}>
-                <div className="relative">
-                  <motion.div
-                    animate={{
-                      boxShadow: hasError
-                        ? "0 0 0 4px rgba(239, 68, 68, 0.2)"
-                        : isPasswordFocused
-                          ? "0 0 0 4px rgba(60, 224, 177, 0.15), 0 0 20px rgba(60, 224, 177, 0.1)"
-                          : "0 0 0 0px rgba(60, 224, 177, 0)"
-                    }}
-                    transition={{ duration: 0.2 }}
-                    className="rounded-xl"
-                  >
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password (min 6 characters)"
-                      required
-                      minLength={6}
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
-                      className={`w-full bg-slate-50 dark:bg-slate-900 border-2 rounded-xl px-4 py-3.5 pr-12 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none transition-all duration-300 ${hasError
-                        ? "border-red-500 bg-red-50 dark:bg-red-950/20"
-                        : isPasswordFocused
-                          ? "border-[#3CE0B1] bg-white dark:bg-slate-800"
-                          : "border-slate-200 dark:border-slate-800"
-                        }`}
-                    />
-                  </motion.div>
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-                <AnimatePresence>
-                  <PasswordStrengthMeter password={password} />
-                </AnimatePresence>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <motion.div
-                  whileHover={{ scale: 1.02, boxShadow: "0 10px 40px rgba(60, 224, 177, 0.3)" }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <RippleButton
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    disabled={isLoading}
-                    className="w-full h-14"
-                  >
-                    {isLoading ? <Loader2 className="animate-spin" /> : (
-                      <>Create Account <ArrowRight size={18} className="ml-2" /></>
-                    )}
-                  </RippleButton>
-                </motion.div>
-              </motion.div>
-            </form>
-
-            <motion.p variants={itemVariants} className="mt-6 text-center text-xs text-slate-400">
-              By creating an account, you agree to our Terms & Privacy Policy.
-            </motion.p>
-
-            <motion.p variants={itemVariants} className="mt-4 text-center text-sm text-slate-500">
+            <motion.p variants={itemVariants} className="mt-8 text-center text-sm text-slate-500">
               Already have an account?{" "}
               <Link href="/login" className="text-[#2F6BFF] hover:text-[#3CE0B1] font-semibold transition-colors">
                 Sign in
