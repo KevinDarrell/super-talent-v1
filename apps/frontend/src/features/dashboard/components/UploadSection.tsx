@@ -64,7 +64,11 @@ const validateFile = async (file: File): Promise<{ valid: boolean; error?: strin
 
 export function UploadSection() {
   const [file, setFile] = useState<File | null>(null);
-  const [activeTab, setActiveTab] = useState<"general" | "text" | "link">("general");
+
+  // State for 2-level hierarchy
+  const [analysisType, setAnalysisType] = useState<"general" | "job">("general");
+  const [inputMethod, setInputMethod] = useState<"text" | "link">("text");
+
   const [jobContext, setJobContext] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -107,8 +111,8 @@ export function UploadSection() {
     analyzeMutation.mutate(
       {
         file: file!,
-        jobDescriptionText: activeTab === "text" ? jobContext : undefined,
-        jobDescriptionUrl: activeTab === "link" ? jobContext : undefined,
+        jobDescriptionText: analysisType === "job" && inputMethod === "text" ? jobContext : undefined,
+        jobDescriptionUrl: analysisType === "job" && inputMethod === "link" ? jobContext : undefined,
         userId: session?.user?.id,
       },
       {
@@ -272,29 +276,76 @@ export function UploadSection() {
 
         <div className="bg-slate-100 dark:bg-slate-950/80 rounded-[24px] p-6 md:p-10 border border-slate-200 dark:border-white/5 relative z-10 transition-colors duration-300">
 
-
-          <div className="flex justify-center mb-8">
+          <div className="flex flex-col items-center gap-6 mb-8">
+            {/* Level 1: Analysis Type Switcher */}
             <div className="inline-flex bg-white dark:bg-slate-900/80 p-1.5 rounded-full border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner">
-              {[
-                { id: 'general', icon: Sparkles, label: 'General Audit' },
-                { id: 'text', icon: FileText, label: 'Job Desc' },
-                { id: 'link', icon: LinkIcon, label: 'LinkedIn URL' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "general" | "text" | "link")}
-                  className={cn(
-                    "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
-                    activeTab === tab.id
-                      ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-lg scale-105"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                  )}
-                >
-                  <tab.icon size={16} className={activeTab === tab.id ? "text-indigo-400 dark:text-indigo-600" : ""} />
-                  <span className="hidden md:inline">{tab.label}</span>
-                </button>
-              ))}
+              <button
+                onClick={() => setAnalysisType('general')}
+                className={cn(
+                  "flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300",
+                  analysisType === 'general'
+                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-lg"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                )}
+              >
+                <Sparkles size={18} className={analysisType === 'general' ? "text-indigo-400 dark:text-indigo-600" : ""} />
+                <span>General Audit</span>
+              </button>
+              <button
+                onClick={() => setAnalysisType('job')}
+                className={cn(
+                  "flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300",
+                  analysisType === 'job'
+                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-lg"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                )}
+              >
+                <div className="flex -space-x-1">
+                  <FileText size={18} className={analysisType === 'job' ? "text-indigo-400 dark:text-indigo-600" : ""} />
+                </div>
+                <span>Target a Specific Job</span>
+              </button>
             </div>
+
+            {/* Level 2: Input Method (Only if 'job' is selected) */}
+            <AnimatePresence>
+              {analysisType === 'job' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
+                  className="overflow-hidden"
+                >
+                  <div className="inline-flex bg-slate-200/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-300/50 dark:border-white/5 gap-1">
+                    <button
+                      onClick={() => setInputMethod('text')}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200",
+                        inputMethod === 'text'
+                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                          : "text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-white/5"
+                      )}
+                    >
+                      <FileText size={14} />
+                      Paste Job Description
+                    </button>
+                    <button
+                      onClick={() => setInputMethod('link')}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200",
+                        inputMethod === 'link'
+                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                          : "text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-white/5"
+                      )}
+                    >
+                      <LinkIcon size={14} />
+                      Paste Job Link
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 h-auto md:h-[340px]">
@@ -350,7 +401,7 @@ export function UploadSection() {
 
             <div className="flex flex-col gap-4">
               <div className="flex-1 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-2xl p-1 relative overflow-hidden group/input focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/50 transition-all">
-                {activeTab === 'general' ? (
+                {analysisType === 'general' ? (
                   <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-60">
                     <Sparkles className="text-indigo-500 dark:text-indigo-400 mb-4" size={48} strokeWidth={1} />
                     <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
@@ -360,7 +411,7 @@ export function UploadSection() {
                 ) : (
                   <textarea
                     className="w-full h-full bg-transparent border-none outline-none text-slate-900 dark:text-slate-200 p-5 text-sm resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600 custom-scrollbar"
-                    placeholder={activeTab === 'link' ? "Paste LinkedIn Job Post URL here..." : "Paste the full Job Description text here..."}
+                    placeholder={inputMethod === 'link' ? "Paste Job Post URL here..." : "Paste the full Job Description text here..."}
                     onChange={(e) => setJobContext(e.target.value)}
                     autoFocus
                   />
