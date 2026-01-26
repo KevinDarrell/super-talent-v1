@@ -5,6 +5,7 @@ import { ScrollProgress } from './ScrollProgress';
 import { StoryHero } from './StoryHero';
 import { ProblemSection } from './ProblemSection';
 import { ProductDemo } from './ProductDemo';
+import { NoExperienceSection } from './NoExperienceSection';
 import { BeforeAfter } from './BeforeAfter';
 import { Features3D } from './Features3D';
 import { Testimonials } from './Testimonials';
@@ -43,7 +44,10 @@ export default function StoryLanding() {
                 {/* 4. The Solution - Product Demo */}
                 <ProductDemo />
 
-                {/* 5. The Transformation - Before/After */}
+                {/* 5. For No Experience Users */}
+                <NoExperienceSection />
+
+                {/* 6. The Transformation - Before/After */}
                 <BeforeAfter />
 
                 {/* 6. Features Deep Dive */}
