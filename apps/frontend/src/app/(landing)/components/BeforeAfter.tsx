@@ -48,7 +48,7 @@ export function BeforeAfter() {
                         The Transformation
                     </span>
                     <h2 className="text-3xl md:text-5xl font-bold text-slate-900">
-                        See the <span className="text-gradient-primary">Difference</span> AI Makes
+                        Your CV, but <span className="text-gradient-primary">Super</span>
                     </h2>
                     <p className="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
                         Watch your CV transform from ignored to interview-ready in seconds.
