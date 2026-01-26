@@ -2,7 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Check, Sparkles, Zap, Crown, Shield, ArrowRight, Loader2 } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Shield, ArrowRight, Loader2, Coffee, Users, Calendar, FileText } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -117,7 +117,7 @@ export function Pricing() {
                         Pricing
                     </span>
                     <h2 className="text-3xl md:text-5xl font-bold text-slate-900">
-                        Simple, <span className="text-gradient-primary">Credit-Based</span> Pricing
+                        Cheaper than Your <span className="text-gradient-primary">Daily Coffee</span>
                     </h2>
                     <p className="text-lg text-slate-600 mt-4 max-w-xl mx-auto">
                         Get 1 free credit daily. Buy more when you need them. No subscriptions.
@@ -237,6 +237,42 @@ export function Pricing() {
                                         </div>
                                         <span className="text-slate-600">Never expires</span>
                                     </motion.li>
+                                    <motion.li
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                        transition={{ delay: 0.35 + index * 0.1 }}
+                                        className="flex items-start gap-3"
+                                    >
+                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${pkg.popular ? 'bg-[#3CE0B1]/20' : 'bg-slate-100'
+                                            }`}>
+                                            <Check size={12} className={pkg.popular ? 'text-[#3CE0B1]' : 'text-slate-400'} />
+                                        </div>
+                                        <span className="text-slate-600">Free Community Member</span>
+                                    </motion.li>
+                                    <motion.li
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                        transition={{ delay: 0.35 + index * 0.1 }}
+                                        className="flex items-start gap-3"
+                                    >
+                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${pkg.popular ? 'bg-[#3CE0B1]/20' : 'bg-slate-100'
+                                            }`}>
+                                            <Check size={12} className={pkg.popular ? 'text-[#3CE0B1]' : 'text-slate-400'} />
+                                        </div>
+                                        <span className="text-slate-600">Periodic CV Clinic</span>
+                                    </motion.li>
+                                    <motion.li
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                        transition={{ delay: 0.35 + index * 0.1 }}
+                                        className="flex items-start gap-3"
+                                    >
+                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${pkg.popular ? 'bg-[#3CE0B1]/20' : 'bg-slate-100'
+                                            }`}>
+                                            <Check size={12} className={pkg.popular ? 'text-[#3CE0B1]' : 'text-slate-400'} />
+                                        </div>
+                                        <span className="text-slate-600">Templates + Examples</span>
+                                    </motion.li>
                                 </ul>
 
                                 {/* CTA */}
@@ -274,7 +310,7 @@ export function Pricing() {
                 >
                     <div className="flex items-center gap-2 text-sm text-slate-500">
                         <Zap size={16} className="text-[#2F6BFF]" />
-                        1 free credit daily (if you have 0 credits)
+                        1 free credit for new user
                     </div>
                     <div className="w-1 h-1 rounded-full bg-slate-300" />
                     <div className="flex items-center gap-2 text-sm text-slate-500">
