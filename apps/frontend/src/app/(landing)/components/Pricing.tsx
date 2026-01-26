@@ -2,7 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Check, Sparkles, Zap, Crown, Shield, ArrowRight, Loader2, Coffee, Users, Calendar, FileText } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Shield, ArrowRight, Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
