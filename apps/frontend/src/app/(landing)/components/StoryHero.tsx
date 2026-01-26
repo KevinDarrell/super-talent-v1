@@ -100,12 +100,12 @@ export function StoryHero() {
                                     style={{ animationDelay: '1000ms', animationFillMode: 'forwards' }}
                                 >
                                     {/* Primary CTA - Glowing button */}
-                                    <Link href="/app" className="group relative">
+                                    <Link href="/app" className="group relative w-full sm:w-auto block">
                                         {/* Glow effect */}
                                         <div className="absolute -inset-1 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] rounded-2xl blur-lg opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
                                         {/* Button */}
-                                        <div className="relative flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white font-semibold rounded-xl overflow-hidden">
+                                        <div className="relative flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#2F6BFF] to-[#3CE0B1] text-white font-semibold rounded-xl overflow-hidden w-full sm:w-auto">
                                             {/* Shine effect */}
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
 
@@ -123,7 +123,7 @@ export function StoryHero() {
                                     {/* Secondary CTA - See a Sample Report */}
                                     <button
                                         onClick={() => setIsModalOpen(true)}
-                                        className="group flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-slate-200 hover:border-[#2F6BFF] text-slate-700 hover:text-[#2F6BFF] font-semibold rounded-xl transition-all duration-300 btn-hover-lift"
+                                        className="group flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-slate-200 hover:border-[#2F6BFF] text-slate-700 hover:text-[#2F6BFF] font-semibold rounded-xl transition-all duration-300 btn-hover-lift w-full sm:w-auto"
                                     >
                                         <Play size={18} className="fill-current" />
                                         <span className="text-lg">See a Sample Report</span>

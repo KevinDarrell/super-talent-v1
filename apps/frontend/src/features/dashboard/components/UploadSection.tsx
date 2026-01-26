@@ -278,11 +278,11 @@ export function UploadSection() {
 
           <div className="flex flex-col items-center gap-5 md:gap-6 mb-6 md:mb-8">
             {/* Level 1: Analysis Type Switcher */}
-            <div className="inline-flex bg-white dark:bg-slate-900/80 p-1 md:p-1.5 rounded-full border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner max-w-full overflow-x-auto no-scrollbar">
+            <div className="flex flex-col sm:inline-flex sm:flex-row w-full sm:w-auto bg-white dark:bg-slate-900/80 p-1 md:p-1.5 rounded-3xl sm:rounded-full border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-inner">
               <button
                 onClick={() => setAnalysisType('general')}
                 className={cn(
-                  "flex items-center gap-1.5 md:gap-2 px-4 py-2.5 md:px-6 md:py-3 rounded-full text-xs md:text-sm font-bold transition-all duration-300 shrink-0",
+                  "flex w-full sm:w-auto justify-center items-center gap-1.5 md:gap-2 px-4 py-3 md:px-6 md:py-3 rounded-2xl sm:rounded-full text-sm font-bold transition-all duration-300",
                   analysisType === 'general'
                     ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-lg"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
@@ -294,7 +294,7 @@ export function UploadSection() {
               <button
                 onClick={() => setAnalysisType('job')}
                 className={cn(
-                  "flex items-center gap-1.5 md:gap-2 px-4 py-2.5 md:px-6 md:py-3 rounded-full text-xs md:text-sm font-bold transition-all duration-300 shrink-0",
+                  "flex w-full sm:w-auto justify-center items-center gap-1.5 md:gap-2 px-4 py-3 md:px-6 md:py-3 rounded-2xl sm:rounded-full text-sm font-bold transition-all duration-300",
                   analysisType === 'job'
                     ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-lg"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
@@ -317,11 +317,11 @@ export function UploadSection() {
                   transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                   className="overflow-hidden w-full flex justify-center"
                 >
-                  <div className="inline-flex bg-slate-200/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-300/50 dark:border-white/5 gap-1 overflow-x-auto max-w-full">
+                  <div className="flex flex-col sm:inline-flex sm:flex-row w-full sm:w-auto bg-slate-200/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-300/50 dark:border-white/5 gap-1">
                     <button
                       onClick={() => setInputMethod('text')}
                       className={cn(
-                        "flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap",
+                        "flex w-full sm:w-auto justify-center items-center gap-2 px-3 py-2 md:px-4 rounded-lg text-xs font-semibold transition-all duration-200",
                         inputMethod === 'text'
                           ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
                           : "text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-white/5"
@@ -333,7 +333,7 @@ export function UploadSection() {
                     <button
                       onClick={() => setInputMethod('link')}
                       className={cn(
-                        "flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap",
+                        "flex w-full sm:w-auto justify-center items-center gap-2 px-3 py-2 md:px-4 rounded-lg text-xs font-semibold transition-all duration-200",
                         inputMethod === 'link'
                           ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
                           : "text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-white/5"

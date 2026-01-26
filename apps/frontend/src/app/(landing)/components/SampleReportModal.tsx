@@ -124,7 +124,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                         {/* Content wrapper */}
                         <div className="relative">
                             {/* Header */}
-                            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100">
+                            <div className="flex items-center justify-between px-4 py-4 md:px-8 md:py-5 border-b border-slate-100">
                                 <div className="flex items-center gap-4">
                                     {/* Step pills */}
                                     <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                                                 animate={{ scale: i + 1 === currentStep ? 1.05 : 1 }}
                                             >
                                                 {i + 1 < currentStep && <CheckCircle size={12} />}
-                                                {label}
+                                                <span className={`${i + 1 !== currentStep ? 'hidden sm:inline' : ''}`}>{label}</span>
                                             </motion.div>
                                         ))}
                                     </div>
@@ -154,7 +154,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                             </div>
 
                             {/* Main Content */}
-                            <div className="p-8 overflow-y-auto max-h-[calc(90vh-80px)]">
+                            <div className="p-4 md:p-8 overflow-y-auto max-h-[calc(90vh-70px)] md:max-h-[calc(90vh-80px)]">
                                 <AnimatePresence mode="wait">
                                     {/* Step 1: CV Preview */}
                                     {currentStep === 1 && (
@@ -170,7 +170,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                                                         <FileText size={14} />
                                                         Step 1 of 5
                                                     </motion.div>
-                                                    <h2 className="text-3xl font-bold text-slate-900 mb-3">Sample CV Selected</h2>
+                                                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Sample CV Selected</h2>
                                                     <p className="text-slate-500 mb-6">We'll analyze this CV to show you how SuperCV works. Click continue to match it against a job.</p>
 
                                                     <div className="space-y-3 mb-8">
@@ -233,7 +233,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                                                         <Briefcase size={14} />
                                                         Step 2 of 5
                                                     </motion.div>
-                                                    <h2 className="text-3xl font-bold text-slate-900 mb-3">Target Job Selected</h2>
+                                                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Target Job Selected</h2>
                                                     <p className="text-slate-500 mb-6">Our AI will analyze how well the CV matches this job's requirements and keywords.</p>
 
                                                     {/* Match preview */}
@@ -432,8 +432,8 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                                                                 className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all group"
                                                             >
                                                                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-sm ${item.priority === 'high' ? 'bg-gradient-to-br from-[#EF4444] to-[#DC2626]' :
-                                                                        item.priority === 'medium' ? 'bg-gradient-to-br from-[#F59E0B] to-[#D97706]' :
-                                                                            'bg-gradient-to-br from-[#3CE0B1] to-[#059669]'
+                                                                    item.priority === 'medium' ? 'bg-gradient-to-br from-[#F59E0B] to-[#D97706]' :
+                                                                        'bg-gradient-to-br from-[#3CE0B1] to-[#059669]'
                                                                     }`}>
                                                                     {i + 1}
                                                                 </div>
@@ -466,7 +466,7 @@ export function SampleReportModal({ isOpen, onClose }: SampleReportModalProps) {
                                                     <Star size={40} className="text-white" />
                                                 </motion.div>
 
-                                                <h2 className="text-3xl font-bold text-slate-900 mb-3">Demo Complete!</h2>
+                                                <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Demo Complete!</h2>
                                                 <p className="text-slate-500 max-w-md mx-auto mb-8">
                                                     This was just a sample. Imagine what SuperCV can do for YOUR CV. Get your personalized analysis now!
                                                 </p>
